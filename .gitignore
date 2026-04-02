@@ -1,7 +1,5 @@
+```
 # Python
-*.claude/
-.claude
-.claude/settings.local.json
 __pycache__/
 *.py[cod]
 *$py.class
@@ -19,68 +17,57 @@ parts/
 sdist/
 var/
 wheels/
-pip-wheel-metadata/
-share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
 MANIFEST
 
 # Virtual environments
-.env
-.venv
-env/
 venv/
+env/
 ENV/
-env.bak/
-venv.bak/
+.venv/
+.env/
 
-# IDE
+# Testing
+.coverage
+htmlcov/
+.tox/
+.nox/
+.coverage.*
+.cache
+.pytest_cache/
+.hypothesis/
+
+# IDE and editor
 .vscode/
 .idea/
 *.swp
 *.swo
-*~
+*.tmp
 
 # OS
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
 Thumbs.db
 
 # Logs
 *.log
-logs/
 
-# BlueFusion specific
-*.pcap
-*.pcapng
-captures/
-data/
-temp/
-*.sqlite
-*.db
-
-# API keys and secrets
+# Environment variables
+.env
 .env.local
-secrets.json
-config/secrets/
+*.env.*
 
-# Test outputs
-.coverage
-.pytest_cache/
-htmlcov/
-.tox/
-.nox/
+# Coverage
+coverage/
 
-# Documentation builds
-docs/_build/
-site/
+# FastAPI/Gradio
+*.db
+*.sqlite
 
-# Temporary files
-*.tmp
-*.temp
-.tmp/
+# Security/crypto related (if any crypto keys/configs are generated)
+*.key
+*.pem
+*.crt
+*.cert
+```
