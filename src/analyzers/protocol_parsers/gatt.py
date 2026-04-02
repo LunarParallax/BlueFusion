@@ -1,14 +1,16 @@
 """
 GATT (Generic Attribute Profile) Protocol Parser
 """
-from typing import Dict, Any, List
+
 import struct
-from .base import ProtocolParser, ParsedField
+from typing import Any, Dict, List
+
+from .base import ParsedField, ProtocolParser
 
 
 class GATTParser(ProtocolParser):
     """Parser for GATT/ATT protocol packets"""
-    
+
     # ATT Opcodes
     ATT_OPCODES = {
         0x01: "Error Response",
@@ -40,7 +42,7 @@ class GATTParser(ProtocolParser):
         0x52: "Write Command",
         0xD2: "Signed Write Command",
     }
-    
+
     # Error codes
     ERROR_CODES = {
         0x01: "Invalid Handle",
@@ -61,26 +63,26 @@ class GATTParser(ProtocolParser):
         0x10: "Unsupported Group Type",
         0x11: "Insufficient Resources",
     }
-    
+
     def can_parse(self, data: bytes) -> bool:
         """Check if this is an ATT packet"""
         if not data or len(data) < 1:
             return False
         opcode = data[0]
         return opcode in self.ATT_OPCODES
-    
+
     def parse(self, data: bytes) -> Dict[str, Any]:
         """Parse ATT/GATT packet"""
         if not data or len(data) < 1:
             return {"error": "Empty packet"}
-        
+
         opcode = data[0]
         result = {
             "opcode": opcode,
             "opcode_name": self.ATT_OPCODES.get(opcode, f"Unknown (0x{opcode:02X})"),
             "length": len(data),
         }
-        
+
         # Parse based on opcode
         if opcode == 0x01:  # Error Response
             result.update(self._parse_error_response(data))
@@ -99,119 +101,127 @@ class GATTParser(ProtocolParser):
         else:
             # Generic parsing for unhandled opcodes
             result["payload"] = data[1:].hex() if len(data) > 1 else ""
-        
+
         return result
-    
+
     def parse_fields(self, data: bytes) -> List[ParsedField]:
         """Parse into structured fields"""
         fields = []
-        
+
         if not data or len(data) < 1:
             return fields
-        
+
         # Opcode field
         opcode = data[0]
-        fields.append(ParsedField(
-            name="Opcode",
-            value=self.ATT_OPCODES.get(opcode, f"Unknown (0x{opcode:02X})"),
-            offset=0,
-            size=1,
-            description=f"ATT operation code: 0x{opcode:02X}"
-        ))
-        
+        fields.append(
+            ParsedField(
+                name="Opcode",
+                value=self.ATT_OPCODES.get(opcode, f"Unknown (0x{opcode:02X})"),
+                offset=0,
+                size=1,
+                description=f"ATT operation code: 0x{opcode:02X}",
+            )
+        )
+
         # Parse remaining fields based on opcode
         if opcode == 0x0A and len(data) >= 3:  # Read Request
             handle = struct.unpack("<H", data[1:3])[0]
-            fields.append(ParsedField(
-                name="Handle",
-                value=f"0x{handle:04X}",
-                offset=1,
-                size=2,
-                description="Attribute handle to read"
-            ))
-        
+            fields.append(
+                ParsedField(
+                    name="Handle",
+                    value=f"0x{handle:04X}",
+                    offset=1,
+                    size=2,
+                    description="Attribute handle to read",
+                )
+            )
+
         return fields
-    
+
     def _parse_error_response(self, data: bytes) -> Dict[str, Any]:
         """Parse Error Response"""
         if len(data) < 5:
             return {"error": "Incomplete error response"}
-        
+
         req_opcode = data[1]
         handle = struct.unpack("<H", data[2:4])[0]
         error_code = data[4]
-        
+
         return {
             "request_opcode": req_opcode,
-            "request_opcode_name": self.ATT_OPCODES.get(req_opcode, f"Unknown (0x{req_opcode:02X})"),
+            "request_opcode_name": self.ATT_OPCODES.get(
+                req_opcode, f"Unknown (0x{req_opcode:02X})"
+            ),
             "handle": f"0x{handle:04X}",
             "error_code": error_code,
-            "error_name": self.ERROR_CODES.get(error_code, f"Unknown (0x{error_code:02X})"),
+            "error_name": self.ERROR_CODES.get(
+                error_code, f"Unknown (0x{error_code:02X})"
+            ),
         }
-    
+
     def _parse_mtu_request(self, data: bytes) -> Dict[str, Any]:
         """Parse MTU Request"""
         if len(data) < 3:
             return {"error": "Incomplete MTU request"}
-        
+
         mtu = struct.unpack("<H", data[1:3])[0]
         return {"client_mtu": mtu}
-    
+
     def _parse_mtu_response(self, data: bytes) -> Dict[str, Any]:
         """Parse MTU Response"""
         if len(data) < 3:
             return {"error": "Incomplete MTU response"}
-        
+
         mtu = struct.unpack("<H", data[1:3])[0]
         return {"server_mtu": mtu}
-    
+
     def _parse_read_request(self, data: bytes) -> Dict[str, Any]:
         """Parse Read Request"""
         if len(data) < 3:
             return {"error": "Incomplete read request"}
-        
+
         handle = struct.unpack("<H", data[1:3])[0]
         return {"handle": f"0x{handle:04X}"}
-    
+
     def _parse_read_response(self, data: bytes) -> Dict[str, Any]:
         """Parse Read Response"""
         value = data[1:] if len(data) > 1 else b""
         return {
             "value": value.hex(),
             "value_length": len(value),
-            "value_ascii": self._safe_ascii(value)
+            "value_ascii": self._safe_ascii(value),
         }
-    
+
     def _parse_write_request(self, data: bytes) -> Dict[str, Any]:
         """Parse Write Request"""
         if len(data) < 3:
             return {"error": "Incomplete write request"}
-        
+
         handle = struct.unpack("<H", data[1:3])[0]
         value = data[3:] if len(data) > 3 else b""
-        
+
         return {
             "handle": f"0x{handle:04X}",
             "value": value.hex(),
             "value_length": len(value),
-            "value_ascii": self._safe_ascii(value)
+            "value_ascii": self._safe_ascii(value),
         }
-    
+
     def _parse_handle_value_notification(self, data: bytes) -> Dict[str, Any]:
         """Parse Handle Value Notification"""
         if len(data) < 3:
             return {"error": "Incomplete notification"}
-        
+
         handle = struct.unpack("<H", data[1:3])[0]
         value = data[3:] if len(data) > 3 else b""
-        
+
         return {
             "handle": f"0x{handle:04X}",
             "value": value.hex(),
             "value_length": len(value),
-            "value_ascii": self._safe_ascii(value)
+            "value_ascii": self._safe_ascii(value),
         }
-    
+
     def _safe_ascii(self, data: bytes) -> str:
         """Convert bytes to safe ASCII representation"""
-        return ''.join(chr(b) if 32 <= b < 127 else '.' for b in data)
+        return "".join(chr(b) if 32 <= b < 127 else "." for b in data)

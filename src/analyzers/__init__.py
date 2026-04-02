@@ -1,6 +1,7 @@
 """
 BlueFusion Packet Analysis Framework
 """
-from .packet_inspector import PacketInspector, InspectionResult
 
-__all__ = ['PacketInspector', 'InspectionResult']
+from .packet_inspector import InspectionResult, PacketInspector
+
+__all__ = ["PacketInspector", "InspectionResult"]

@@ -2,8 +2,10 @@
 """
 Test direct API calls to debug UI issues
 """
+
 import sys
-sys.path.insert(0, 'src')
+
+sys.path.insert(0, "src")
 
 from ui.client import BlueFusionClient
 from ui.interface_handlers import InterfaceHandlers
@@ -26,6 +28,7 @@ try:
 except Exception as e:
     print(f"Error: {e}")
     import traceback
+
     traceback.print_exc()
 
 # Test 2: Start Scanning
@@ -36,6 +39,7 @@ try:
 except Exception as e:
     print(f"Error: {e}")
     import traceback
+
     traceback.print_exc()
 
 # Test 3: Get devices
