@@ -63,7 +63,7 @@ BlueFusion supports BLE analysis worldwide with:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/BlueFusion.git
+git clone https://github.com/LunarParallax/BlueFusion.git
 cd BlueFusion
 
 # Run the installer
@@ -245,15 +245,6 @@ BlueFusion is designed for legitimate security research and testing:
 ## 📜 License
 
 MIT License - see [LICENSE](LICENSE) file for details.
-
-## 🌐 Community & Support
-
-- **GitHub Issues**: [Report bugs or request features](https://github.com/yourusername/BlueFusion/issues)
-- **Discord Community**: [Join our Discord](https://discord.gg/bluefusion)
-- **Twitter**: [@BlueFusionBLE](https://twitter.com/BlueFusionBLE)
-- **Blog**: [bluefusion.security](https://bluefusion.security)
-
-
 
 ## 🗺️ Roadmap
 
