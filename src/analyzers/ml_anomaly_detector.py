@@ -38,6 +38,7 @@ class AnomalyType(str, Enum):
     PROTOCOL = "protocol"
     SECURITY = "security"
     PATTERN = "pattern"
+    INFORMATION_DISCLOSURE = "information_disclosure"
 
 
 class AnomalyDetectionResult(BaseModel):
