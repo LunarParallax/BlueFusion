@@ -1,0 +1,2 @@
+[console_scripts]
+bluefusion = bluefusion:cli
