@@ -154,9 +154,7 @@ class GATTParser(ProtocolParser):
             ),
             "handle": f"0x{handle:04X}",
             "error_code": error_code,
-            "error_name": self.ERROR_CODES.get(
-                error_code, f"Unknown (0x{error_code:02X})"
-            ),
+            "error_name": self.ERROR_CODES.get(error_code, f"Unknown (0x{error_code:02X})"),
         }
 
     def _parse_mtu_request(self, data: bytes) -> Dict[str, Any]:

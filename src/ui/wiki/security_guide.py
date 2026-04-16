@@ -43,7 +43,7 @@ def on_pairing_request(event):
     print(f"Pairing request from {event['address']}")
     print(f"Method: {event['method']}")
     print(f"IO Capabilities: {event['io_caps']}")
-    
+
 def on_encryption_change(event):
     print(f"Encryption changed: {event['enabled']}")
     print(f"Key size: {event['key_size']} bytes")
@@ -55,28 +55,28 @@ def on_encryption_change(event):
 ```python
 def analyze_pairing_security(device):
     vulnerabilities = []
-    
+
     if device['pairing_method'] == 'Just Works':
         vulnerabilities.append({
             'severity': 'HIGH',
             'issue': 'Just Works pairing - No MITM protection',
             'recommendation': 'Use Passkey or Numeric Comparison'
         })
-    
+
     if device['key_size'] < 16:
         vulnerabilities.append({
             'severity': 'MEDIUM',
             'issue': f'Weak key size: {device["key_size"]} bytes',
             'recommendation': 'Use 16-byte keys'
         })
-    
+
     if not device['secure_connections']:
         vulnerabilities.append({
             'severity': 'LOW',
             'issue': 'Legacy pairing used',
             'recommendation': 'Enable LE Secure Connections'
         })
-    
+
     return vulnerabilities
 ```
 
@@ -84,7 +84,7 @@ def analyze_pairing_security(device):
 ```python
 def check_privacy_issues(device):
     issues = []
-    
+
     # Check for static addresses
     if device['address_type'] == 'public' or device['address_type'] == 'static':
         issues.append({
@@ -92,17 +92,17 @@ def check_privacy_issues(device):
             'impact': 'Device can be tracked over time',
             'fix': 'Enable private addressing'
         })
-    
+
     # Check for identifiable data in advertisements
     if 'name' in device['advertisement']:
-        if any(pattern in device['advertisement']['name'] 
+        if any(pattern in device['advertisement']['name']
                for pattern in ['phone', 'user', 'personal']):
             issues.append({
                 'issue': 'Potentially sensitive device name',
                 'impact': 'May reveal user identity',
                 'fix': 'Use generic device names'
             })
-    
+
     return issues
 ```
 
@@ -152,7 +152,7 @@ def analyze_key_exchange(packets):
         'dhkey_check': None,
         'key_distribution': []
     }
-    
+
     for packet in packets:
         if packet['type'] == 'SMP_PAIRING_REQUEST':
             key_exchange['pairing_request'] = packet
@@ -161,7 +161,7 @@ def analyze_key_exchange(packets):
         elif packet['type'] == 'SMP_PUBLIC_KEY':
             key_exchange['public_keys'].append(packet)
         # ... continue for other SMP packets
-    
+
     return key_exchange
 ```
 
@@ -173,7 +173,7 @@ def analyze_key_exchange(packets):
 ```python
 def detect_mitm_indicators(packets):
     indicators = []
-    
+
     # Check for suspicious pairing timing
     pairing_times = extract_pairing_times(packets)
     if any(t < 100 for t in pairing_times):  # Less than 100ms
@@ -182,7 +182,7 @@ def detect_mitm_indicators(packets):
             'confidence': 'HIGH',
             'reason': 'Abnormally fast pairing response'
         })
-    
+
     # Check for multiple pairing attempts
     pairing_attempts = count_pairing_attempts(packets)
     if pairing_attempts > 3:
@@ -191,7 +191,7 @@ def detect_mitm_indicators(packets):
             'confidence': 'MEDIUM',
             'reason': f'{pairing_attempts} pairing attempts detected'
         })
-    
+
     return indicators
 ```
 
@@ -200,11 +200,11 @@ def detect_mitm_indicators(packets):
 def detect_replay_attacks(packets):
     seen_packets = {}
     replay_candidates = []
-    
+
     for packet in packets:
         if packet['encrypted']:
             packet_hash = hash(packet['data'] + packet['counter'])
-            
+
             if packet_hash in seen_packets:
                 replay_candidates.append({
                     'original': seen_packets[packet_hash],
@@ -213,7 +213,7 @@ def detect_replay_attacks(packets):
                 })
             else:
                 seen_packets[packet_hash] = packet
-    
+
     return replay_candidates
 ```
 
@@ -221,7 +221,7 @@ def detect_replay_attacks(packets):
 ```python
 def detect_jamming(channel_stats):
     jamming_indicators = []
-    
+
     for channel, stats in channel_stats.items():
         # High error rate
         if stats['error_rate'] > 0.3:  # 30% errors
@@ -230,7 +230,7 @@ def detect_jamming(channel_stats):
                 'type': 'high_error_rate',
                 'severity': 'HIGH'
             })
-        
+
         # Sudden drop in packets
         if stats['packet_rate_change'] < -0.5:  # 50% drop
             jamming_indicators.append({
@@ -238,7 +238,7 @@ def detect_jamming(channel_stats):
                 'type': 'packet_rate_drop',
                 'severity': 'MEDIUM'
             })
-    
+
     return jamming_indicators
 ```
 
@@ -272,21 +272,21 @@ class SecurityMonitor:
             'vulnerable_devices': 0,
             'attacks_detected': 0
         }
-    
+
     def update(self, packet):
         # Check for security events
         if self.is_pairing_packet(packet):
             self.analyze_pairing_security(packet)
-        
+
         if self.is_encrypted(packet):
             self.verify_encryption_strength(packet)
-        
+
         if self.is_suspicious(packet):
             self.create_alert(packet)
-    
+
     def get_security_score(self, device):
         score = 100
-        
+
         # Deduct points for vulnerabilities
         if device['pairing_method'] == 'Just Works':
             score -= 30
@@ -296,7 +296,7 @@ class SecurityMonitor:
             score -= 15
         if not device['secure_connections']:
             score -= 10
-        
+
         return max(0, score)
 ```
 

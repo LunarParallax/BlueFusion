@@ -3,10 +3,10 @@
 Debug script to test CORS and connectivity between Gradio and FastAPI
 """
 
-import requests
 import asyncio
+
+import requests
 import websockets
-import json
 
 
 def test_api_connection():
@@ -50,9 +50,7 @@ def test_scan_endpoint():
             "Content-Type": "application/json",
         }
         data = {"interface": "both", "mode": "active"}
-        response = requests.post(
-            "http://localhost:8000/scan/start", json=data, headers=headers
-        )
+        response = requests.post("http://localhost:8000/scan/start", json=data, headers=headers)
         print(f"✅ Scan Start Status: {response.status_code}")
         print(f"Response: {response.json()}")
     except Exception as e:
@@ -71,9 +69,7 @@ async def test_websocket():
                 message = await asyncio.wait_for(websocket.recv(), timeout=2.0)
                 print(f"Received: {message}")
             except asyncio.TimeoutError:
-                print(
-                    "No messages received (timeout) - this is normal if no scanning is active"
-                )
+                print("No messages received (timeout) - this is normal if no scanning is active")
     except Exception as e:
         print(f"❌ WebSocket Connection Failed: {e}")
 

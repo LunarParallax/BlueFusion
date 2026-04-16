@@ -66,9 +66,7 @@ class ConnectionDiagnostics:
 
                 # Check CORS headers
                 cors_headers = {
-                    k: v
-                    for k, v in response.headers.items()
-                    if "access-control" in k.lower()
+                    k: v for k, v in response.headers.items() if "access-control" in k.lower()
                 }
                 results["cors_headers_present"] = len(cors_headers) > 0
                 results["cors_headers"] = cors_headers
@@ -125,9 +123,7 @@ class ConnectionDiagnostics:
             )
         except Exception as e:
             results["error_details"] = f"Connection error: {str(e)}"
-            results["suggestions"].append(
-                "Ensure API server supports WebSocket connections"
-            )
+            results["suggestions"].append("Ensure API server supports WebSocket connections")
 
         return results
 
@@ -162,9 +158,7 @@ class ConnectionDiagnostics:
 
         # WebSocket Diagnostics
         report.append("\n## WebSocket Connection Test")
-        ws_results = asyncio.run(
-            ConnectionDiagnostics.diagnose_websocket_connection(ws_url)
-        )
+        ws_results = asyncio.run(ConnectionDiagnostics.diagnose_websocket_connection(ws_url))
 
         if ws_results["ws_connectable"]:
             report.append("✅ WebSocket connection successful")

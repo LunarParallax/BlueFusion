@@ -39,7 +39,7 @@ bluefusion analyze-device "FitTracker-XYZ" --comprehensive
 
 # Output includes:
 # - Complete service map
-# - Data flow visualization  
+# - Data flow visualization
 # - Security vulnerabilities
 # - Privacy concerns
 ```
@@ -55,7 +55,7 @@ vulnerabilities = {
         "poc": "bluefusion exploit --auth-bypass FitTracker-XYZ"
     },
     "DATA_LEAK": {
-        "severity": "MEDIUM", 
+        "severity": "MEDIUM",
         "description": "Personal data in advertisements",
         "data": "User ID and step count broadcast publicly",
         "fix": "Disable unnecessary advertisement data"
@@ -100,7 +100,7 @@ audit = bluefusion.security_audit("SmartLock-9876")
 # Key findings:
 print(audit.summary())
 # 1. CRITICAL: Predictable unlock codes
-# 2. HIGH: Replay attack vulnerability  
+# 2. HIGH: Replay attack vulnerability
 # 3. HIGH: No rolling codes implemented
 # 4. MEDIUM: Battery level reveals presence
 # 5. LOW: Debug service exposed
@@ -328,7 +328,7 @@ tester = bluefusion.SecurityTester()
 tester.add_service(
     uuid="1234-5678-9abc-def0",
     characteristics=[
-        {"uuid": "char-1", "properties": ["read", "notify"], 
+        {"uuid": "char-1", "properties": ["read", "notify"],
          "permissions": ["encryption", "authentication"]}
     ]
 )
@@ -360,31 +360,31 @@ from bluefusion.exploit import BLEExploit, Characteristic
 
 class CustomExploit(BLEExploit):
     \"\"\"Example custom exploit for vulnerable device\"\"\"
-    
+
     def __init__(self):
         super().__init__()
         self.name = "Custom Auth Bypass"
         self.cve = "CVE-2024-XXXXX"
-        
+
     def check_vulnerable(self, device):
         \"\"\"Check if device is vulnerable\"\"\"
         # Connect and enumerate
         services = device.enumerate_services()
-        
+
         # Look for vulnerable service
         vuln_service = services.get("12345678-1234-1234-1234-123456789abc")
         if vuln_service and not vuln_service.requires_auth:
             return True
         return False
-    
+
     def exploit(self, device):
         \"\"\"Perform the exploit\"\"\"
         # Connect without pairing
         device.connect(skip_pairing=True)
-        
+
         # Access protected characteristic
         secret = device.read_characteristic(0x0042)
-        
+
         return {
             "success": True,
             "extracted_data": secret,

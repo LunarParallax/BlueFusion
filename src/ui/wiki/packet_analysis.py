@@ -235,14 +235,14 @@ export_config = {
 def analyze_connection_timing(packets):
     intervals = []
     last_timestamp = None
-    
+
     for packet in packets:
         if packet['type'] == 'LL_DATA':
             if last_timestamp:
                 interval = packet['timestamp'] - last_timestamp
                 intervals.append(interval)
             last_timestamp = packet['timestamp']
-    
+
     return {
         "average_interval": np.mean(intervals),
         "std_deviation": np.std(intervals),
@@ -256,7 +256,7 @@ def analyze_connection_timing(packets):
 # Analyze advertisement patterns
 def analyze_advertisements(packets):
     devices = {}
-    
+
     for packet in packets:
         if packet['type'] in ['ADV_IND', 'ADV_NONCONN_IND']:
             addr = packet['address']
@@ -267,16 +267,16 @@ def analyze_advertisements(packets):
                     'intervals': [],
                     'last_seen': None
                 }
-            
+
             devices[addr]['count'] += 1
             devices[addr]['rssi_values'].append(packet['rssi'])
-            
+
             if devices[addr]['last_seen']:
                 interval = packet['timestamp'] - devices[addr]['last_seen']
                 devices[addr]['intervals'].append(interval)
-            
+
             devices[addr]['last_seen'] = packet['timestamp']
-    
+
     return devices
 ```
 

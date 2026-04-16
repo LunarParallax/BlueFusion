@@ -14,17 +14,15 @@ class Visualizer:
     """Handles data visualization for BlueFusion UI"""
 
     @staticmethod
-    def create_rssi_plot(
-        device_data: Dict[str, Any], limit: int = 10
-    ) -> Optional[go.Figure]:
+    def create_rssi_plot(device_data: Dict[str, Any], limit: int = 10) -> Optional[go.Figure]:
         """Create RSSI plot for top devices"""
         if not device_data:
             return None
 
         # Get top devices by packet count
-        sorted_devices = sorted(
-            device_data.items(), key=lambda x: x[1]["packets"], reverse=True
-        )[:limit]
+        sorted_devices = sorted(device_data.items(), key=lambda x: x[1]["packets"], reverse=True)[
+            :limit
+        ]
 
         fig = go.Figure()
 
@@ -60,9 +58,7 @@ class Visualizer:
 
         # Use last N packets
         recent_packets = (
-            packet_history[-max_packets:]
-            if len(packet_history) > max_packets
-            else packet_history
+            packet_history[-max_packets:] if len(packet_history) > max_packets else packet_history
         )
 
         # Group packets by timestamp (1 second bins)

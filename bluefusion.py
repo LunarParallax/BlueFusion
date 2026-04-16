@@ -32,9 +32,7 @@ def kill_existing_services():
                     # Check if process is using the port
                     for conn in proc.net_connections():
                         if conn.laddr.port == port and conn.status == "LISTEN":
-                            print(
-                                f"⚠️  Killing process using port {port} (PID: {proc.pid})"
-                            )
+                            print(f"⚠️  Killing process using port {port} (PID: {proc.pid})")
                             proc.terminate()
                             killed_pids.append(proc.pid)
                             try:
@@ -58,14 +56,11 @@ def kill_existing_services():
                 if proc.info["name"] and "python" in proc.info["name"].lower():
                     cmdline = proc.info["cmdline"]
                     if cmdline and any(
-                        "fastapi_server.py" in str(arg)
-                        or "gradio_interface.py" in str(arg)
+                        "fastapi_server.py" in str(arg) or "gradio_interface.py" in str(arg)
                         for arg in cmdline
                     ):
                         if proc.pid not in killed_pids:
-                            print(
-                                f"⚠️  Killing remaining BlueFusion process (PID: {proc.pid})"
-                            )
+                            print(f"⚠️  Killing remaining BlueFusion process (PID: {proc.pid})")
                             proc.terminate()
                             try:
                                 proc.wait(timeout=3)
@@ -172,9 +167,7 @@ def start(api_port, ui_port, no_ui):
             "--reload",
         ]
 
-    api_process = subprocess.Popen(
-        api_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
-    )
+    api_process = subprocess.Popen(api_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     processes.append(api_process)
 
     # Wait for API to start

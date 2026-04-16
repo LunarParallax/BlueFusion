@@ -77,9 +77,7 @@ class RoadmapStorage:
                 for feature, info in features.items():
                     if feature in saved_data[category]:
                         # Update status from saved data
-                        info["status"] = saved_data[category][feature].get(
-                            "status", info["status"]
-                        )
+                        info["status"] = saved_data[category][feature].get("status", info["status"])
                         # Add notes if available
                         if "notes" in saved_data[category][feature]:
                             info["notes"] = saved_data[category][feature]["notes"]
@@ -102,8 +100,7 @@ class RoadmapStorage:
 
         # Save report
         report_file = (
-            self.storage_dir
-            / f"progress_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+            self.storage_dir / f"progress_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
         )
         with open(report_file, "w") as f:
             json.dump(report, f, indent=2)

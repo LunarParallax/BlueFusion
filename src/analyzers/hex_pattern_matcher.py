@@ -65,9 +65,7 @@ class HexPatternMatcher:
         patterns = self._find_all_patterns(data)
 
         # Sort by frequency and count
-        sorted_patterns = sorted(
-            patterns, key=lambda p: (p.count, p.length), reverse=True
-        )
+        sorted_patterns = sorted(patterns, key=lambda p: (p.count, p.length), reverse=True)
 
         # Calculate coverage
         coverage = self._calculate_coverage(data, sorted_patterns)
@@ -134,9 +132,7 @@ class HexPatternMatcher:
     def _filter_overlapping_patterns(self, patterns: List[Pattern]) -> List[Pattern]:
         """Remove patterns that are subpatterns of longer patterns"""
         # Sort by length (descending) and count
-        sorted_patterns = sorted(
-            patterns, key=lambda p: (p.length, p.count), reverse=True
-        )
+        sorted_patterns = sorted(patterns, key=lambda p: (p.length, p.count), reverse=True)
 
         filtered = []
         covered_positions = set()
@@ -231,12 +227,8 @@ class HexPatternMatcher:
                 for i in range(0, len(data) - byte_size * 2, byte_size):
                     # Extract values
                     val1 = int.from_bytes(data[i : i + byte_size], "little")
-                    val2 = int.from_bytes(
-                        data[i + byte_size : i + 2 * byte_size], "little"
-                    )
-                    val3 = int.from_bytes(
-                        data[i + 2 * byte_size : i + 3 * byte_size], "little"
-                    )
+                    val2 = int.from_bytes(data[i + byte_size : i + 2 * byte_size], "little")
+                    val3 = int.from_bytes(data[i + 2 * byte_size : i + 3 * byte_size], "little")
 
                     # Check for arithmetic sequence
                     if val2 - val1 == val3 - val2:
@@ -256,7 +248,7 @@ class HexPatternMatcher:
                         if length >= 3:
                             sequences.append(
                                 {
-                                    "type": f"arithmetic_uint{byte_size*8}",
+                                    "type": f"arithmetic_uint{byte_size * 8}",
                                     "start_pos": i,
                                     "length": length,
                                     "byte_size": byte_size,

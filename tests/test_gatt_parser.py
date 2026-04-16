@@ -3,6 +3,7 @@ Tests for GATT Protocol Parser
 """
 
 import pytest
+
 from src.analyzers.protocol_parsers import GATTParser
 
 

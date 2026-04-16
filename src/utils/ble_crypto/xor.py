@@ -67,9 +67,7 @@ class BLEXORDecryptor(BLEDecryptorBase):
 
         return bytes(plaintext)
 
-    def _decrypt_with_counter(
-        self, key: bytes, ciphertext: bytes, counter_start: int = 0
-    ) -> bytes:
+    def _decrypt_with_counter(self, key: bytes, ciphertext: bytes, counter_start: int = 0) -> bytes:
         """XOR with incrementing counter (common in packet-based systems)"""
         plaintext = bytearray()
         key_len = len(key)
@@ -112,9 +110,7 @@ class BLEXORDecryptor(BLEDecryptorBase):
             payload_to_decrypt = encrypted_pdu[data_start:]
 
             if packet_counter is not None:
-                decrypted = self._decrypt_with_counter(
-                    key, payload_to_decrypt, packet_counter
-                )
+                decrypted = self._decrypt_with_counter(key, payload_to_decrypt, packet_counter)
             else:
                 decrypted = self._decrypt_simple(key, payload_to_decrypt)
 
@@ -259,9 +255,7 @@ def decrypt_ble_packet_xor(
     Returns:
         Decrypted payload or None if decryption fails
     """
-    return _xor_decryptor.decrypt_ble_packet_xor(
-        key, encrypted_pdu, packet_counter, skip_header
-    )
+    return _xor_decryptor.decrypt_ble_packet_xor(key, encrypted_pdu, packet_counter, skip_header)
 
 
 def find_xor_key_from_known_plaintext(

@@ -57,9 +57,7 @@ class SecurityHandlers:
 
         return message, show_input, input_label
 
-    def submit_pairing_response(
-        self, device_address: str, response: str, pairing_type: str
-    ) -> str:
+    def submit_pairing_response(self, device_address: str, response: str, pairing_type: str) -> str:
         """Submit pairing response"""
         if device_address not in self.pending_pairing:
             return "No pending pairing for this device"
@@ -148,9 +146,7 @@ def create_security_ui() -> Dict[str, Any]:
                 components["pairing_submit"] = gr.Button("Submit", visible=False)
 
         with gr.Row():
-            components["bonded_devices"] = gr.DataFrame(
-                label="Bonded Devices", interactive=False
-            )
+            components["bonded_devices"] = gr.DataFrame(label="Bonded Devices", interactive=False)
 
             with gr.Column():
                 components["remove_bond_address"] = gr.Textbox(

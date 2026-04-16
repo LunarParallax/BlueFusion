@@ -39,15 +39,11 @@ class RoadmapUI:
                 info["status"], "❓"
             )
 
-            rows.append(
-                [status_emoji, feature, info["description"], info.get("notes", "")]
-            )
+            rows.append([status_emoji, feature, info["description"], info.get("notes", "")])
 
         return rows
 
-    def update_feature(
-        self, category: str, feature: str, status: str, notes: str
-    ) -> str:
+    def update_feature(self, category: str, feature: str, status: str, notes: str) -> str:
         """Update a feature's status"""
         if category in self.features and feature in self.features[category]:
             # Update in memory
@@ -66,8 +62,8 @@ class RoadmapUI:
         completed = 0
         partial = 0
 
-        for category, features in self.features.items():
-            for feature, info in features.items():
+        for _category, features in self.features.items():
+            for _feature, info in features.items():
                 total += 1
                 if info["status"] == "completed":
                     completed += 1
@@ -89,7 +85,7 @@ class RoadmapUI:
 ---
 
 ### 📈 Implementation Velocity
-- Core features are {completed/total*100:.0f}% complete
+- Core features are {completed / total * 100:.0f}% complete
 - {partial} features are in progress
 - {pending} features await implementation
 """
@@ -110,9 +106,7 @@ class RoadmapUI:
             if category in self.features:
                 for feature, info in self.features[category].items():
                     if info["status"] == "pending":
-                        priority_features.append(
-                            [category, feature, info["description"]]
-                        )
+                        priority_features.append([category, feature, info["description"]])
                         if len(priority_features) >= 10:
                             return priority_features
 
@@ -135,16 +129,13 @@ class RoadmapUI:
                     or query in info["description"].lower()
                     or query in info.get("notes", "").lower()
                 ):
-
                     status_emoji = {
                         "completed": "✅",
                         "partial": "🔶",
                         "pending": "⬜",
                     }.get(info["status"], "❓")
 
-                    results.append(
-                        [status_emoji, category, feature, info["description"]]
-                    )
+                    results.append([status_emoji, category, feature, info["description"]])
 
         return results if results else [["", "No results found", "", ""]]
 
@@ -156,8 +147,8 @@ class RoadmapUI:
         info = self.features[category][feature]
         context = f"""Feature: {feature}
 Category: {category}
-Status: {info['status']}
-Description: {info['description']}"""
+Status: {info["status"]}
+Description: {info["description"]}"""
 
         if info.get("notes"):
             context += f"\nNotes: {info['notes']}"
@@ -236,9 +227,7 @@ Completed features:
 
         return context
 
-    def generate_related_features(
-        self, category: str, feature: str, max_features: int = 5
-    ) -> str:
+    def generate_related_features(self, category: str, feature: str, max_features: int = 5) -> str:
         """Find and format related features that might need to be implemented together"""
         if category not in self.features:
             return ""
@@ -259,9 +248,7 @@ Completed features:
 
                 # Check for keyword matches
                 feat_text = f"{feat} {feat_info['description']}".lower()
-                matches = sum(
-                    1 for kw in all_keywords if kw in feat_text and len(kw) > 3
-                )
+                matches = sum(1 for kw in all_keywords if kw in feat_text and len(kw) > 3)
 
                 if matches >= 2:  # At least 2 keyword matches
                     related.append(
@@ -325,7 +312,9 @@ Completed features:
     def get_selected_features_context(self) -> str:
         """Generate context for all selected features"""
         if not self.selected_features:
-            return "No features selected. Select features by clicking checkboxes in the feature table."
+            return (
+                "No features selected. Select features by clicking checkboxes in the feature table."
+            )
 
         features = []
         for feature_id in self.selected_features:
@@ -338,9 +327,7 @@ Completed features:
         """Clear all selected features"""
         self.selected_features.clear()
 
-    def generate_quick_copy_formats(
-        self, category: str, feature: str
-    ) -> Dict[str, str]:
+    def generate_quick_copy_formats(self, category: str, feature: str) -> Dict[str, str]:
         """Generate various copy formats for a feature"""
         if category not in self.features or feature not in self.features[category]:
             return {}

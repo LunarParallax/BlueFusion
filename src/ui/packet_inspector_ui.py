@@ -194,9 +194,7 @@ class PacketInspectorUI:
             )
 
         if not protocol_data:
-            protocol_data = [
-                {"Protocol": "No data", "Packet Count": 0, "Percentage": "0%"}
-            ]
+            protocol_data = [{"Protocol": "No data", "Packet Count": 0, "Percentage": "0%"}]
 
         return pd.DataFrame(protocol_data)
 
@@ -236,9 +234,7 @@ class PacketInspectorUI:
 
             field_data = []
             for key, value in parsed_data.items():
-                field_data.append(
-                    {"Field": key.replace("_", " ").title(), "Value": str(value)}
-                )
+                field_data.append({"Field": key.replace("_", " ").title(), "Value": str(value)})
 
             return pd.DataFrame(field_data)
         except Exception as e:

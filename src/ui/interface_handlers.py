@@ -95,12 +95,12 @@ class InterfaceHandlers:
             return "No data collected yet"
 
         output = f"""**Overall Statistics**
-Total unique devices: {stats['total_devices']}
-Total packets captured: {stats['total_packets']}
+Total unique devices: {stats["total_devices"]}
+Total packets captured: {stats["total_packets"]}
 
 **By Interface**
-MacBook BLE devices: {stats['macbook_devices']}
-Sniffer devices: {stats['sniffer_devices']}
+MacBook BLE devices: {stats["macbook_devices"]}
+Sniffer devices: {stats["sniffer_devices"]}
 
 **Top 5 Most Active Devices**"""
 

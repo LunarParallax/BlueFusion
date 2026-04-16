@@ -4,7 +4,6 @@ Fix script to update URLs and improve connectivity between Gradio and FastAPI
 """
 
 import os
-import sys
 
 
 def update_file_urls():
@@ -74,23 +73,23 @@ def create_test_html():
     <button onclick="testAPI()">Test API Connection</button>
     <button onclick="testWebSocket()">Test WebSocket</button>
     <div id="results"></div>
-    
+
     <script>
         const API_URL = 'http://127.0.0.1:8000';
         const WS_URL = 'ws://127.0.0.1:8000/stream';
-        
+
         function log(message) {
             const results = document.getElementById('results');
             results.innerHTML += '<p>' + message + '</p>';
         }
-        
+
         async function testAPI() {
             log('Testing API connection...');
             try {
                 const response = await fetch(API_URL + '/');
                 const data = await response.json();
                 log('✅ API Connected: ' + JSON.stringify(data));
-                
+
                 // Test CORS with POST
                 const scanResponse = await fetch(API_URL + '/scan/start', {
                     method: 'POST',
@@ -105,23 +104,23 @@ def create_test_html():
                 log('❌ API Error: ' + error.message);
             }
         }
-        
+
         function testWebSocket() {
             log('Testing WebSocket connection...');
             const ws = new WebSocket(WS_URL);
-            
+
             ws.onopen = () => {
                 log('✅ WebSocket connected');
             };
-            
+
             ws.onerror = (error) => {
                 log('❌ WebSocket error: ' + error);
             };
-            
+
             ws.onmessage = (event) => {
                 log('📨 WebSocket message: ' + event.data);
             };
-            
+
             ws.onclose = () => {
                 log('WebSocket closed');
             };

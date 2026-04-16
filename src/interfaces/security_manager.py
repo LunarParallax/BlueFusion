@@ -66,9 +66,7 @@ class SecurityManager:
     """Manages BLE security operations across all interfaces"""
 
     def __init__(self, bond_storage_path: Optional[Path] = None):
-        self.bond_storage_path = (
-            bond_storage_path or Path.home() / ".bluefusion" / "bonds.json"
-        )
+        self.bond_storage_path = bond_storage_path or Path.home() / ".bluefusion" / "bonds.json"
         self.bonds: Dict[str, BondInfo] = {}
         self._pairing_callbacks: Dict[str, Callable] = {}
         # Initialize decryptors
@@ -85,9 +83,7 @@ class SecurityManager:
                     for addr, bond_data in data.items():
                         self.bonds[addr] = BondInfo(
                             address=addr,
-                            security_level=SecurityLevel(
-                                bond_data.get("security_level", 0)
-                            ),
+                            security_level=SecurityLevel(bond_data.get("security_level", 0)),
                             authenticated=bond_data.get("authenticated", False),
                         )
             except Exception as e:
@@ -128,7 +124,8 @@ class SecurityManager:
         elif method == PairingMethod.NUMERIC_COMPARISON:
             if "numeric_comparison" in self._pairing_callbacks:
                 confirmed = await self._pairing_callbacks["numeric_comparison"](
-                    device_address, "123456"  # Example code
+                    device_address,
+                    "123456",  # Example code
                 )
                 return confirmed
 
@@ -231,9 +228,7 @@ class SecurityManager:
         # Try XOR if we have XOR key
         if bond.xor_key:
             try:
-                result = decrypt_ble_packet_xor(
-                    bond.xor_key, encrypted_pdu, packet_counter
-                )
+                result = decrypt_ble_packet_xor(bond.xor_key, encrypted_pdu, packet_counter)
                 if result:
                     return result
             except Exception:
@@ -349,9 +344,7 @@ class SecurityManager:
         if avg_entropy > 7.0:  # High entropy suggests strong encryption
             results["high_entropy"] = True
 
-        results["likely_aes_ccm"] = (
-            results["consistent_structure"] and results["high_entropy"]
-        )
+        results["likely_aes_ccm"] = results["consistent_structure"] and results["high_entropy"]
 
         return results
 
@@ -403,9 +396,7 @@ class SecurityManager:
 
                 if recovered_key:
                     # Test the key by trying to decrypt
-                    test_decrypt = decrypt_ble_packet_xor(
-                        recovered_key, encrypted_packet
-                    )
+                    test_decrypt = decrypt_ble_packet_xor(recovered_key, encrypted_packet)
 
                     if test_decrypt and known_plaintext in test_decrypt:
                         # Key works! Store it

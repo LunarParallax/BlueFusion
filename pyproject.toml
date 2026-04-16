@@ -51,8 +51,15 @@ ai = [
 bluefusion = "bluefusion:cli"
 
 [tool.ruff]
-line-length = 88
+line-length = 100
+
+[tool.ruff.lint]
 select = ["E", "F", "I", "N", "W", "B", "Q"]
+ignore = ["E501"]  # Line length handled by line-length setting
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101"]  # Allow assert in tests
+"src/ui/wiki/*" = ["D"]  # Skip docstring requirements for wiki docs
 
 [tool.mypy]
 python_version = "3.9"

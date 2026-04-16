@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import asyncio
-import sys
 from datetime import datetime
+
 from src.interfaces.macbook_ble import MacBookBLE
 
 
@@ -40,7 +40,7 @@ async def test_macbook_scanner():
 
     # Show discovered devices
     devices = await mac_ble.get_devices()
-    print(f"\n\n=== SCAN COMPLETE ===")
+    print("\n\n=== SCAN COMPLETE ===")
     print(f"Found {len(devices)} devices:\n")
 
     for device in devices:

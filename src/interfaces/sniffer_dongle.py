@@ -20,9 +20,7 @@ from .channel_hopper import SmartChannelHopper
 
 
 class SnifferDongle(BLEInterface):
-    def __init__(
-        self, port: Optional[str] = None, baudrate: int = 115200, security_manager=None
-    ):
+    def __init__(self, port: Optional[str] = None, baudrate: int = 115200, security_manager=None):
         super().__init__(DeviceType.SNIFFER_DONGLE, security_manager)
         self.port = port
         self.baudrate = baudrate
@@ -57,9 +55,7 @@ class SnifferDongle(BLEInterface):
                     self._last_error = error_msg
                     self.serial_conn = None
             except serial.SerialException as e:
-                error_msg = (
-                    f"Failed to initialize serial connection on {self.port}: {e}"
-                )
+                error_msg = f"Failed to initialize serial connection on {self.port}: {e}"
                 print(error_msg)
                 self._last_error = error_msg
                 self.serial_conn = None
@@ -300,9 +296,7 @@ class SnifferDongle(BLEInterface):
         print(f"Characteristic discovery not supported on sniffer dongle for {address}")
         return []
 
-    async def discover_descriptors(
-        self, address: str, char_uuid: str
-    ) -> List[BLEDescriptor]:
+    async def discover_descriptors(self, address: str, char_uuid: str) -> List[BLEDescriptor]:
         """Discover descriptors for a specific characteristic"""
         # Sniffer dongles cannot directly discover descriptors
         print(f"Descriptor discovery not supported on sniffer dongle for {address}")

@@ -3,8 +3,9 @@
 Test frontend-backend communication
 """
 
-import requests
 import json
+
+import requests
 
 print("Testing BlueFusion Frontend-Backend Communication")
 print("=" * 50)
@@ -25,7 +26,7 @@ try:
         "http://localhost:8000/devices", headers={"Origin": "http://localhost:7860"}
     )
     print(f"   Status Code: {response.status_code}")
-    print(f"   CORS Headers:")
+    print("   CORS Headers:")
     for header in [
         "Access-Control-Allow-Origin",
         "Access-Control-Allow-Methods",

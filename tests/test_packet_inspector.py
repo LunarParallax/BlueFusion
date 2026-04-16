@@ -2,9 +2,11 @@
 Tests for Packet Inspector
 """
 
-import pytest
 from datetime import datetime
-from src.analyzers import PacketInspector, InspectionResult
+
+import pytest
+
+from src.analyzers import InspectionResult, PacketInspector
 from src.interfaces.base import BLEPacket, DeviceType
 
 

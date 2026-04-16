@@ -52,9 +52,7 @@ class CharacteristicMonitor:
                 gr.Markdown("### Monitoring Controls")
                 with gr.Row():
                     read_once_btn = gr.Button("📖 Read Once", variant="secondary")
-                    start_monitor_btn = gr.Button(
-                        "▶️ Start Monitoring", variant="primary"
-                    )
+                    start_monitor_btn = gr.Button("▶️ Start Monitoring", variant="primary")
                     stop_monitor_btn = gr.Button("⏹️ Stop Monitoring", variant="stop")
 
                 monitor_interval = gr.Slider(
@@ -135,9 +133,7 @@ class CharacteristicMonitor:
                     with gr.Tab("Advanced Analysis"):
                         sequence_analysis = gr.JSON(label="Sequence Analysis", value={})
 
-                        encoding_detection = gr.JSON(
-                            label="Encoding Detection", value={}
-                        )
+                        encoding_detection = gr.JSON(label="Encoding Detection", value={})
 
                         bit_patterns = gr.JSON(label="Bit-level Patterns", value=[])
 
@@ -262,27 +258,19 @@ class CharacteristicMonitor:
                 raw_value = bytes.fromhex(raw_value)
 
             # Analyze the value
-            analysis_result = self._analyze_value(
-                raw_value, min_pattern_len, max_pattern_len
-            )
+            analysis_result = self._analyze_value(raw_value, min_pattern_len, max_pattern_len)
 
             # Format displays
             current_display = self._format_hex_display(raw_value)
             value_info = self._create_value_info(raw_value)
             pattern_summary = self._create_pattern_summary(analysis_result["patterns"])
-            pattern_viz = self._create_pattern_visualization(
-                raw_value, analysis_result["patterns"]
-            )
+            pattern_viz = self._create_pattern_visualization(raw_value, analysis_result["patterns"])
 
             return (
                 current_display,
                 value_info,
                 pattern_summary,
-                (
-                    analysis_result["patterns"].patterns
-                    if analysis_result["patterns"]
-                    else []
-                ),
+                (analysis_result["patterns"].patterns if analysis_result["patterns"] else []),
                 pattern_viz,
                 analysis_result["sequences"],
                 analysis_result["encodings"],
@@ -309,9 +297,7 @@ class CharacteristicMonitor:
     ) -> str:
         """Start monitoring a characteristic"""
         if not address or not char_uuid:
-            return (
-                "**Status:** ❌ Please provide device address and characteristic UUID"
-            )
+            return "**Status:** ❌ Please provide device address and characteristic UUID"
 
         key = f"{address}:{char_uuid}"
 
@@ -331,9 +317,7 @@ class CharacteristicMonitor:
     def stop_monitoring(self, address: str, char_uuid: str) -> str:
         """Stop monitoring a characteristic"""
         if not address or not char_uuid:
-            return (
-                "**Status:** ❌ Please provide device address and characteristic UUID"
-            )
+            return "**Status:** ❌ Please provide device address and characteristic UUID"
 
         key = f"{address}:{char_uuid}"
 
@@ -382,9 +366,7 @@ class CharacteristicMonitor:
         if key not in self.monitoring_data or not self.monitoring_data[key]["active"]:
             # Return current history if available
             if key in self.value_history and self.value_history[key]["values"]:
-                history_df = self._create_history_dataframe(
-                    self.value_history[key]["values"]
-                )
+                history_df = self._create_history_dataframe(self.value_history[key]["values"])
                 latest = self.value_history[key]["values"][-1]
 
                 # Analyze latest value
@@ -397,9 +379,7 @@ class CharacteristicMonitor:
                     self._create_value_info(latest["raw_value"]),
                     self._create_pattern_summary(analysis["patterns"]),
                     analysis["patterns"].patterns if analysis["patterns"] else [],
-                    self._create_pattern_visualization(
-                        latest["raw_value"], analysis["patterns"]
-                    ),
+                    self._create_pattern_visualization(latest["raw_value"], analysis["patterns"]),
                     history_df,
                     analysis["sequences"],
                     analysis["encodings"],
@@ -438,23 +418,17 @@ class CharacteristicMonitor:
                     self.monitoring_data[key]["last_read"] = now
 
                     # Analyze value
-                    analysis = self._analyze_value(
-                        raw_value, min_pattern_len, max_pattern_len
-                    )
+                    analysis = self._analyze_value(raw_value, min_pattern_len, max_pattern_len)
 
                     # Create history dataframe
-                    history_df = self._create_history_dataframe(
-                        self.value_history[key]["values"]
-                    )
+                    history_df = self._create_history_dataframe(self.value_history[key]["values"])
 
                     return (
                         self._format_hex_display(raw_value),
                         self._create_value_info(raw_value),
                         self._create_pattern_summary(analysis["patterns"]),
                         analysis["patterns"].patterns if analysis["patterns"] else [],
-                        self._create_pattern_visualization(
-                            raw_value, analysis["patterns"]
-                        ),
+                        self._create_pattern_visualization(raw_value, analysis["patterns"]),
                         history_df,
                         analysis["sequences"],
                         analysis["encodings"],
@@ -465,22 +439,16 @@ class CharacteristicMonitor:
 
         # Return current state
         if key in self.value_history and self.value_history[key]["values"]:
-            history_df = self._create_history_dataframe(
-                self.value_history[key]["values"]
-            )
+            history_df = self._create_history_dataframe(self.value_history[key]["values"])
             latest = self.value_history[key]["values"][-1]
-            analysis = self._analyze_value(
-                latest["raw_value"], min_pattern_len, max_pattern_len
-            )
+            analysis = self._analyze_value(latest["raw_value"], min_pattern_len, max_pattern_len)
 
             return (
                 self._format_hex_display(latest["raw_value"]),
                 self._create_value_info(latest["raw_value"]),
                 self._create_pattern_summary(analysis["patterns"]),
                 analysis["patterns"].patterns if analysis["patterns"] else [],
-                self._create_pattern_visualization(
-                    latest["raw_value"], analysis["patterns"]
-                ),
+                self._create_pattern_visualization(latest["raw_value"], analysis["patterns"]),
                 history_df,
                 analysis["sequences"],
                 analysis["encodings"],
@@ -571,7 +539,7 @@ class CharacteristicMonitor:
 """
 
         for i, pattern in enumerate(pattern_match.patterns[:5]):
-            summary += f"\n{i+1}. `{pattern.hex_pattern}` - {pattern.count} times, length {pattern.length}"
+            summary += f"\n{i + 1}. `{pattern.hex_pattern}` - {pattern.count} times, length {pattern.length}"
 
         if pattern_match.most_frequent:
             summary += f"\n\n**Most Frequent:** `{pattern_match.most_frequent.hex_pattern}` ({pattern_match.most_frequent.count} occurrences)"
@@ -614,7 +582,7 @@ class CharacteristicMonitor:
 
         viz.append("\nPattern Legend:")
         for i, pattern in enumerate(pattern_match.patterns[:5]):
-            viz.append(f"[{i+1}] = {pattern.hex_pattern}")
+            viz.append(f"[{i + 1}] = {pattern.hex_pattern}")
 
         return "\n".join(viz)
 
@@ -655,12 +623,8 @@ class CharacteristicMonitor:
         for entry in history[-20:]:  # Last 20 entries
             timestamp = entry["timestamp"].strftime("%H:%M:%S.%f")[:-3]
             raw_value = entry["raw_value"]
-            hex_value = (
-                raw_value.hex() if len(raw_value) <= 8 else raw_value[:8].hex() + "..."
-            )
-            ascii_value = "".join(
-                chr(b) if 32 <= b < 127 else "." for b in raw_value[:8]
-            )
+            hex_value = raw_value.hex() if len(raw_value) <= 8 else raw_value[:8].hex() + "..."
+            ascii_value = "".join(chr(b) if 32 <= b < 127 else "." for b in raw_value[:8])
             length = len(raw_value)
             change = entry.get("change", "")
 

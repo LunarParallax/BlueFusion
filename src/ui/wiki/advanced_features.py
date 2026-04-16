@@ -16,14 +16,14 @@ class CustomProtocolParser(BaseParser):
         super().__init__()
         self.protocol_id = "CUSTOM_001"
         self.name = "My Custom Protocol"
-    
+
     def can_parse(self, packet):
         # Check if this parser can handle the packet
         return packet.get('service_uuid') == "FF00"
-    
+
     def parse(self, packet):
         data = packet['data']
-        
+
         # Parse custom protocol fields
         parsed = {
             'protocol': self.protocol_id,
@@ -32,7 +32,7 @@ class CustomProtocolParser(BaseParser):
             'payload': data[2:2+data[1]],
             'checksum': data[-1]
         }
-        
+
         # Decode command types
         command_map = {
             0x01: "STATUS_REQUEST",
@@ -40,12 +40,12 @@ class CustomProtocolParser(BaseParser):
             0x10: "DATA_TRANSFER",
             0x20: "CONFIG_UPDATE"
         }
-        
+
         parsed['command_name'] = command_map.get(
-            parsed['command'], 
+            parsed['command'],
             "UNKNOWN"
         )
-        
+
         return parsed
 ```
 
@@ -69,16 +69,16 @@ class BlueFusionPlugin:
         self.name = "Unknown Plugin"
         self.version = "1.0.0"
         self.author = "Unknown"
-    
+
     def on_packet_received(self, packet):
         pass
-    
+
     def on_device_discovered(self, device):
         pass
-    
+
     def on_connection_established(self, connection):
         pass
-    
+
     def get_ui_components(self):
         return []
 
@@ -88,7 +88,7 @@ class DeviceTracker(BlueFusionPlugin):
         super().__init__()
         self.name = "Device Tracker"
         self.tracked_devices = {}
-    
+
     def on_device_discovered(self, device):
         if device['address'] not in self.tracked_devices:
             self.tracked_devices[device['address']] = {
@@ -100,7 +100,7 @@ class DeviceTracker(BlueFusionPlugin):
         else:
             self.tracked_devices[device['address']]['last_seen'] = datetime.now()
             self.tracked_devices[device['address']]['rssi_history'].append(device['rssi'])
-    
+
     def estimate_location(self, rssi_values):
         # Simple distance estimation based on RSSI
         avg_rssi = sum(rssi_values) / len(rssi_values)
@@ -119,7 +119,7 @@ class ElasticsearchExporter:
     def __init__(self, host="localhost", port=9200):
         self.es = Elasticsearch([{'host': host, 'port': port}])
         self.index_name = "bluefusion-packets"
-    
+
     def export_packet(self, packet):
         doc = {
             'timestamp': datetime.utcnow(),
@@ -130,12 +130,12 @@ class ElasticsearchExporter:
             'interface': packet['interface'],
             'decoded': packet.get('decoded', {})
         }
-        
+
         self.es.index(
             index=self.index_name,
             body=doc
         )
-    
+
     def search_packets(self, query):
         results = self.es.search(
             index=self.index_name,
@@ -155,14 +155,14 @@ from influxdb import InfluxDBClient
 class InfluxDBExporter:
     def __init__(self, host='localhost', port=8086):
         self.client = InfluxDBClient(
-            host=host, 
+            host=host,
             port=port,
             database='bluefusion'
         )
-    
+
     def export_metrics(self, device_metrics):
         points = []
-        
+
         for device, metrics in device_metrics.items():
             point = {
                 "measurement": "ble_device",
@@ -179,7 +179,7 @@ class InfluxDBExporter:
                 }
             }
             points.append(point)
-        
+
         self.client.write_points(points)
 ```
 
@@ -236,7 +236,7 @@ class BLEAnomalyDetector:
         )
         self.feature_buffer = []
         self.is_trained = False
-    
+
     def extract_features(self, packet):
         features = [
             packet['rssi'],
@@ -246,23 +246,23 @@ class BLEAnomalyDetector:
             hash(packet['address']) % 1000
         ]
         return features
-    
+
     def add_training_data(self, packet):
         features = self.extract_features(packet)
         self.feature_buffer.append(features)
-        
+
         if len(self.feature_buffer) >= 1000 and not self.is_trained:
             self.train()
-    
+
     def train(self):
         X = np.array(self.feature_buffer)
         self.model.fit(X)
         self.is_trained = True
-    
+
     def is_anomaly(self, packet):
         if not self.is_trained:
             return False
-        
+
         features = np.array([self.extract_features(packet)])
         prediction = self.model.predict(features)
         return prediction[0] == -1
@@ -280,28 +280,28 @@ class DeviceClassifier:
             max_iter=500
         )
         self.label_encoder = {}
-    
+
     def train_from_dataset(self, dataset_path):
         data = pd.read_csv(dataset_path)
         features = self.engineer_features(data)
         labels = data['device_type']
-        
+
         self.model.fit(features, labels)
         joblib.dump(self.model, 'device_classifier.pkl')
-    
+
     def classify_device(self, device_data):
         features = self.engineer_features([device_data])
         prediction = self.model.predict(features)
         confidence = self.model.predict_proba(features).max()
-        
+
         return {
             'device_type': prediction[0],
             'confidence': confidence
         }
-    
+
     def engineer_features(self, data):
         features = []
-        
+
         for device in data:
             device_features = [
                 device.get('manufacturer_id', 0),
@@ -310,7 +310,7 @@ class DeviceClassifier:
                 device.get('advertisement_interval', 0),
             ]
             features.append(device_features)
-        
+
         return np.array(features)
 ```
 
@@ -321,14 +321,14 @@ class DeviceClassifier:
 class AutomationEngine:
     def __init__(self):
         self.rules = []
-    
+
     def add_rule(self, condition, action):
         self.rules.append({
             'condition': condition,
             'action': action,
             'enabled': True
         })
-    
+
     def process_event(self, event):
         for rule in self.rules:
             if rule['enabled'] and rule['condition'](event):
@@ -366,13 +366,13 @@ from bluefusion import PacketAnalyzer
 def analyze_capture_files(directory):
     analyzer = PacketAnalyzer()
     results = {}
-    
+
     for capture_file in Path(directory).glob("*.json"):
         print(f"Analyzing {capture_file.name}...")
-        
+
         with open(capture_file) as f:
             packets = json.load(f)
-        
+
         analysis = analyzer.analyze_batch(packets)
         results[capture_file.name] = {
             'total_packets': len(packets),
@@ -381,18 +381,18 @@ def analyze_capture_files(directory):
             'packet_types': analysis['packet_types'],
             'security_issues': analysis['security_issues']
         }
-    
+
     return results
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("directory", help="Directory containing capture files")
     parser.add_argument("--output", help="Output file for results")
-    
+
     args = parser.parse_args()
-    
+
     results = analyze_capture_files(args.directory)
-    
+
     if args.output:
         with open(args.output, 'w') as f:
             json.dump(results, f, indent=2)
@@ -413,28 +413,28 @@ class OptimizedPacketProcessor:
         self.packet_queue = asyncio.Queue(maxsize=10000)
         self.processors = []
         self.num_workers = num_workers
-    
+
     async def process_packets(self):
         tasks = []
         for _ in range(self.num_workers):
             task = asyncio.create_task(self._worker())
             tasks.append(task)
-        
+
         await asyncio.gather(*tasks)
-    
+
     async def _worker(self):
         while True:
             packet = await self.packet_queue.get()
             if packet is None:
                 break
-            
+
             loop = asyncio.get_event_loop()
             await loop.run_in_executor(
                 self.executor,
                 self._process_packet,
                 packet
             )
-    
+
     def _process_packet(self, packet):
         for processor in self.processors:
             processor.process(packet)
@@ -449,17 +449,17 @@ class CompressedPacketStorage:
     def __init__(self):
         self.packets = []
         self.compression_ratio = 0
-    
+
     def store_packet(self, packet):
         binary_packet = self._to_binary(packet)
         compressed = zlib.compress(binary_packet, level=9)
-        
+
         self.packets.append(compressed)
         self.compression_ratio = len(compressed) / len(binary_packet)
-    
+
     def _to_binary(self, packet):
         format_string = "!Q6sbb"
-        
+
         return struct.pack(
             format_string,
             int(packet['timestamp'] * 1000),
@@ -467,7 +467,7 @@ class CompressedPacketStorage:
             packet['rssi'],
             packet['type']
         ) + packet['data']
-    
+
     def retrieve_packet(self, index):
         compressed = self.packets[index]
         binary_packet = zlib.decompress(compressed)

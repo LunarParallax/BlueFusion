@@ -33,9 +33,7 @@ class ServiceExplorerUI:
                 )
 
                 with gr.Row():
-                    refresh_devices_btn = gr.Button(
-                        "🔄 Refresh Device List", variant="secondary"
-                    )
+                    refresh_devices_btn = gr.Button("🔄 Refresh Device List", variant="secondary")
                     copy_address_btn = gr.Button("📋 Copy Address", variant="secondary")
 
                 # Selected device info
@@ -82,9 +80,7 @@ class ServiceExplorerUI:
                         char_dropdown = gr.Dropdown(
                             label="Select Characteristic", choices=[], interactive=True
                         )
-                        char_info = gr.JSON(
-                            label="Characteristic Information", value={}
-                        )
+                        char_info = gr.JSON(label="Characteristic Information", value={})
 
                         desc_dropdown = gr.Dropdown(
                             label="Select Descriptor", choices=[], interactive=True
@@ -92,14 +88,10 @@ class ServiceExplorerUI:
                         desc_info = gr.JSON(label="Descriptor Information", value={})
 
                     with gr.Tab("Raw Data"):
-                        raw_data = gr.Code(
-                            label="Raw Discovery Data", language="json", value="{}"
-                        )
+                        raw_data = gr.Code(label="Raw Discovery Data", language="json", value="{}")
 
                     with gr.Tab("Statistics"):
-                        stats_display = gr.Markdown(
-                            "**Discovery Statistics**\n\nNo data available"
-                        )
+                        stats_display = gr.Markdown("**Discovery Statistics**\n\nNo data available")
 
         # Event handlers
         refresh_devices_btn.click(self.refresh_device_list, outputs=[device_selector])
@@ -310,7 +302,7 @@ class ServiceExplorerUI:
                 "**Discovery Statistics**\n\nNo data available",
             )
 
-        result = self.client.disconnect_device(address)
+        self.client.disconnect_device(address)
 
         if address in self.connected_devices:
             del self.connected_devices[address]
@@ -334,9 +326,7 @@ class ServiceExplorerUI:
             empty_stats,
         )
 
-    def discover_all_services(
-        self, address: str
-    ) -> Tuple[str, Dict, gr.Dropdown, str, str]:
+    def discover_all_services(self, address: str) -> Tuple[str, Dict, gr.Dropdown, str, str]:
         """Discover all services for a connected device"""
         if not address:
             return (
@@ -415,18 +405,14 @@ class ServiceExplorerUI:
         address = selected_device if selected_device else manual_address
         return self.on_descriptor_selected(address, desc_uuid)
 
-    def on_service_selected(
-        self, address: str, service_uuid: str
-    ) -> Tuple[Dict, gr.Dropdown]:
+    def on_service_selected(self, address: str, service_uuid: str) -> Tuple[Dict, gr.Dropdown]:
         """Handle service selection"""
         if not address or not service_uuid or address not in self.service_data:
             return {}, gr.Dropdown(choices=[])
 
         # Find the selected service
         services = self.service_data[address].get("services", [])
-        selected_service = next(
-            (s for s in services if s["uuid"] == service_uuid), None
-        )
+        selected_service = next((s for s in services if s["uuid"] == service_uuid), None)
 
         if not selected_service:
             return {}, gr.Dropdown(choices=[])
@@ -452,9 +438,7 @@ class ServiceExplorerUI:
 
         return service_info, char_dropdown
 
-    def on_characteristic_selected(
-        self, address: str, char_uuid: str
-    ) -> Tuple[Dict, gr.Dropdown]:
+    def on_characteristic_selected(self, address: str, char_uuid: str) -> Tuple[Dict, gr.Dropdown]:
         """Handle characteristic selection"""
         if not address or not char_uuid or address not in self.service_data:
             return {}, gr.Dropdown(choices=[])

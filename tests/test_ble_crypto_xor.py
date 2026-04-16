@@ -3,12 +3,13 @@ Tests for BLE XOR Cryptography Utilities
 """
 
 import pytest
+
 from src.utils.ble_crypto import (
+    BLEDecryptionError,
     BLEXORDecryptor,
+    analyze_xor_encryption,
     decrypt_ble_packet_xor,
     find_xor_key_from_known_plaintext,
-    analyze_xor_encryption,
-    BLEDecryptionError,
 )
 
 
@@ -36,7 +37,10 @@ class TestBLEXORDecryptor:
 
         # Decrypt using our function
         result = self.decryptor.decrypt(
-            self.test_key, b"", ciphertext, None  # nonce not used in XOR
+            self.test_key,
+            b"",
+            ciphertext,
+            None,  # nonce not used in XOR
         )
 
         assert result == self.test_plaintext
@@ -93,9 +97,7 @@ class TestBLEXORDecryptor:
         full_pdu = header + length + bytes(payload_encrypted)
 
         # Decrypt
-        result = self.decryptor.decrypt_ble_packet_xor(
-            self.test_key, full_pdu, skip_header=True
-        )
+        result = self.decryptor.decrypt_ble_packet_xor(self.test_key, full_pdu, skip_header=True)
 
         assert result == self.test_plaintext
 
@@ -186,9 +188,7 @@ class TestBLEXORDecryptor:
             ciphertext.append(byte ^ key[i % len(key)])
 
         # Analyze
-        analysis = self.decryptor.analyze_xor_patterns(
-            bytes(ciphertext), max_key_length=10
-        )
+        analysis = self.decryptor.analyze_xor_patterns(bytes(ciphertext), max_key_length=10)
 
         # Check that key length 4 is detected as likely
         assert 4 in analysis["likely_key_lengths"]

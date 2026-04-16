@@ -3,7 +3,8 @@ Tests for the Hex Pattern Matcher
 """
 
 import pytest
-from src.analyzers.hex_pattern_matcher import HexPatternMatcher, Pattern, PatternMatch
+
+from src.analyzers.hex_pattern_matcher import HexPatternMatcher
 
 
 class TestHexPatternMatcher:
@@ -69,9 +70,7 @@ class TestHexPatternMatcher:
         data = bytes.fromhex("00CAFE00CAFE00")
         result = self.matcher.analyze(data)
 
-        cafe_pattern = next(
-            (p for p in result.patterns if p.hex_pattern == "cafe"), None
-        )
+        cafe_pattern = next((p for p in result.patterns if p.hex_pattern == "cafe"), None)
         assert cafe_pattern is not None
         assert cafe_pattern.positions == [1, 5]  # 0-indexed positions
 
@@ -102,9 +101,7 @@ class TestHexPatternMatcher:
         data = bytes.fromhex("000100020003")
         sequences = self.matcher.find_sequences(data)
 
-        uint16_seq = next(
-            (s for s in sequences if s["type"] == "arithmetic_uint16"), None
-        )
+        uint16_seq = next((s for s in sequences if s["type"] == "arithmetic_uint16"), None)
         assert uint16_seq is not None
         assert uint16_seq["difference"] == 0x0100
         assert uint16_seq["length"] == 3

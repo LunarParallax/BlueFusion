@@ -171,9 +171,7 @@ class AutoConnectManager:
         # Load saved state
         self._load_state()
 
-    def add_managed_device(
-        self, address: str, config: Optional[ConnectionConfig] = None
-    ):
+    def add_managed_device(self, address: str, config: Optional[ConnectionConfig] = None):
         """Add a device to be managed by the auto-connect manager"""
         device_config = config or self.default_config
         self.managed_connections[address] = ManagedConnection(address, device_config)
@@ -318,10 +316,7 @@ class AutoConnectManager:
 
                 elif connection.state == ConnectionState.PAUSED:
                     # Wait until pause expires
-                    if (
-                        connection.pause_until
-                        and datetime.now() >= connection.pause_until
-                    ):
+                    if connection.pause_until and datetime.now() >= connection.pause_until:
                         connection.pause_until = None
                         connection.state = ConnectionState.DISCONNECTED
                     else:
@@ -342,9 +337,7 @@ class AutoConnectManager:
         connection.state = ConnectionState.CONNECTING
         connection.connection_start_time = time.time()
 
-        self._emit_event(
-            address, "connection_attempt", {"retry_count": connection.retry_count}
-        )
+        self._emit_event(address, "connection_attempt", {"retry_count": connection.retry_count})
 
         try:
             # Attempt connection with timeout
@@ -429,9 +422,7 @@ class AutoConnectManager:
                 # Update activity timestamp
                 connection.last_activity = datetime.now()
 
-                self._emit_event(
-                    address, "health_check_success", {"response_time": response_time}
-                )
+                self._emit_event(address, "health_check_success", {"response_time": response_time})
 
             except asyncio.TimeoutError:
                 # Health check timed out
@@ -545,13 +536,9 @@ class AutoConnectManager:
                     and connection.state == ConnectionState.DISCONNECTED
                     and address not in self.connection_tasks
                 ):
-
                     if (
                         best_priority is None
-                        or self._compare_priority(
-                            connection.config.priority, best_priority
-                        )
-                        > 0
+                        or self._compare_priority(connection.config.priority, best_priority) > 0
                     ):
                         best_candidate = address
                         best_priority = connection.config.priority
@@ -575,9 +562,7 @@ class AutoConnectManager:
         }
         return priority_values[p1] - priority_values[p2]
 
-    def register_event_callback(
-        self, callback: Callable[[str, str, Dict[str, Any]], None]
-    ):
+    def register_event_callback(self, callback: Callable[[str, str, Dict[str, Any]], None]):
         """Register callback for auto-connect events"""
         self.event_callbacks.append(callback)
 
@@ -600,9 +585,7 @@ class AutoConnectManager:
                 "retry_count": connection.retry_count,
                 "enabled": connection.is_enabled,
                 "paused_until": (
-                    connection.pause_until.isoformat()
-                    if connection.pause_until
-                    else None
+                    connection.pause_until.isoformat() if connection.pause_until else None
                 ),
             }
         return None
@@ -610,8 +593,7 @@ class AutoConnectManager:
     def get_all_connections_status(self) -> Dict[str, Dict[str, Any]]:
         """Get status of all managed connections"""
         return {
-            address: self.get_connection_status(address)
-            for address in self.managed_connections
+            address: self.get_connection_status(address) for address in self.managed_connections
         }
 
     def _save_state(self):
@@ -662,12 +644,8 @@ class AutoConnectManager:
                 try:
                     # Convert config dict back to ConnectionConfig
                     config_data = device_data["config"]
-                    config_data["retry_strategy"] = RetryStrategy(
-                        config_data["retry_strategy"]
-                    )
-                    config_data["priority"] = ConnectionPriority(
-                        config_data["priority"]
-                    )
+                    config_data["retry_strategy"] = RetryStrategy(config_data["retry_strategy"])
+                    config_data["priority"] = ConnectionPriority(config_data["priority"])
 
                     config = ConnectionConfig(**config_data)
 
@@ -761,9 +739,7 @@ class AutoConnectManager:
             # Aggregate metrics
             metrics = connection.metrics
             report["overall_metrics"]["total_attempts"] += metrics.total_attempts
-            report["overall_metrics"][
-                "total_successes"
-            ] += metrics.successful_connections
+            report["overall_metrics"]["total_successes"] += metrics.successful_connections
             report["overall_metrics"]["total_failures"] += metrics.failed_connections
             report["overall_metrics"]["total_uptime"] += metrics.connection_uptime
 
@@ -830,9 +806,7 @@ class AutoConnectManager:
 
             # Uptime bonus (20% weight)
             if metrics.connection_uptime > 0:
-                uptime_score = min(
-                    20, metrics.connection_uptime / 300
-                )  # 5 minutes = full score
+                uptime_score = min(20, metrics.connection_uptime / 300)  # 5 minutes = full score
             else:
                 uptime_score = 0
 
@@ -848,9 +822,7 @@ class AutoConnectManager:
 
         # Generate recommendations
         if metrics.stability_score < 0.5:
-            health["recommendations"].append(
-                "Consider increasing retry attempts or timeout"
-            )
+            health["recommendations"].append("Consider increasing retry attempts or timeout")
 
         if metrics.consecutive_failures >= 3:
             health["recommendations"].append(
