@@ -24,9 +24,7 @@ class BlueFusionClient:
         except Exception as e:
             return {"error": str(e)}
 
-    def start_scan(
-        self, interface: str = "both", mode: str = "active"
-    ) -> Dict[str, Any]:
+    def start_scan(self, interface: str = "both", mode: str = "active") -> Dict[str, Any]:
         """Start scanning"""
         try:
             response = self.client.post(
@@ -40,9 +38,7 @@ class BlueFusionClient:
     def stop_scan(self, interface: str = "both") -> Dict[str, Any]:
         """Stop scanning"""
         try:
-            response = self.client.post(
-                f"{self.base_url}/scan/stop", json={"interface": interface}
-            )
+            response = self.client.post(f"{self.base_url}/scan/stop", json={"interface": interface})
             return response.json()
         except Exception as e:
             return {"error": str(e)}
@@ -50,9 +46,7 @@ class BlueFusionClient:
     def get_devices(self, interface: str = "both") -> Dict[str, Any]:
         """Get discovered devices"""
         try:
-            response = self.client.get(
-                f"{self.base_url}/devices", params={"interface": interface}
-            )
+            response = self.client.get(f"{self.base_url}/devices", params={"interface": interface})
             return response.json()
         except Exception as e:
             return {"error": str(e)}
@@ -89,9 +83,7 @@ class BlueFusionClient:
         except Exception as e:
             return {"error": str(e)}
 
-    def discover_characteristics(
-        self, address: str, service_uuid: str
-    ) -> Dict[str, Any]:
+    def discover_characteristics(self, address: str, service_uuid: str) -> Dict[str, Any]:
         """Discover characteristics for a service"""
         try:
             response = self.client.get(
@@ -114,9 +106,7 @@ class BlueFusionClient:
     def discover_all_services(self, address: str) -> Dict[str, Any]:
         """Trigger comprehensive service discovery"""
         try:
-            response = self.client.post(
-                f"{self.base_url}/devices/{address}/services/discover"
-            )
+            response = self.client.post(f"{self.base_url}/devices/{address}/services/discover")
             return response.json()
         except Exception as e:
             return {"error": str(e)}

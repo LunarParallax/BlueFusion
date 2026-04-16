@@ -3,19 +3,18 @@ Unit tests for Auto-Connect Manager
 """
 
 import asyncio
+from datetime import datetime
+from typing import Any, Dict, Optional
+
 import pytest
-from unittest.mock import Mock, AsyncMock, patch
-from datetime import datetime, timedelta
-from typing import Dict, Any, Optional
 
 from src.interfaces.auto_connect_manager import (
     AutoConnectManager,
     ConnectionConfig,
-    ConnectionState,
     ConnectionPriority,
-    RetryStrategy,
+    ConnectionState,
     ManagedConnection,
-    ConnectionMetrics,
+    RetryStrategy,
 )
 from src.interfaces.base import BLEInterface, BLEPacket, DeviceType
 
@@ -73,15 +72,11 @@ class MockBLEInterface(BLEInterface):
     async def discover_descriptors(self, address: str, char_uuid: str):
         return []
 
-    async def read_characteristic(
-        self, address: str, char_uuid: str
-    ) -> Optional[bytes]:
+    async def read_characteristic(self, address: str, char_uuid: str) -> Optional[bytes]:
         # Simulate successful read for health checks
         return b"MockDevice"
 
-    async def write_characteristic(
-        self, address: str, char_uuid: str, data: bytes
-    ) -> bool:
+    async def write_characteristic(self, address: str, char_uuid: str, data: bytes) -> bool:
         return True
 
 
@@ -448,20 +443,9 @@ class TestAutoConnectManager:
         manager.add_managed_device(low_priority_addr, low_config)
 
         # Test priority comparison
-        assert (
-            manager._compare_priority(
-                ConnectionPriority.HIGH, ConnectionPriority.MEDIUM
-            )
-            > 0
-        )
-        assert (
-            manager._compare_priority(ConnectionPriority.MEDIUM, ConnectionPriority.LOW)
-            > 0
-        )
-        assert (
-            manager._compare_priority(ConnectionPriority.HIGH, ConnectionPriority.HIGH)
-            == 0
-        )
+        assert manager._compare_priority(ConnectionPriority.HIGH, ConnectionPriority.MEDIUM) > 0
+        assert manager._compare_priority(ConnectionPriority.MEDIUM, ConnectionPriority.LOW) > 0
+        assert manager._compare_priority(ConnectionPriority.HIGH, ConnectionPriority.HIGH) == 0
 
     @pytest.mark.anyio
     async def test_concurrent_connection_limit(self, manager):

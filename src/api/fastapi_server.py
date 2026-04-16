@@ -71,11 +71,13 @@ async def lifespan(app: FastAPI):
         )
         # Wait for response (with timeout)
         # In real implementation, this would wait for UI response
-        return "123456"  # Default passkey for now
+        # TODO: Implement proper passkey handling via UI
+        import os
 
-    security_manager.register_pairing_callback(
-        "passkey_request", handle_passkey_request
-    )
+        passkey = os.environ.get("BLUEFUSION_PASSKEY", "000000")
+        return passkey
+
+    security_manager.register_pairing_callback("passkey_request", handle_passkey_request)
 
     # Initialize MacBook BLE with security manager
     try:
@@ -162,9 +164,7 @@ async def root():
                 "port": sniffer.port if sniffer else None,
                 "scanning": sniffer.is_running if sniffer else False,
                 "status": (
-                    "connected"
-                    if (sniffer and sniffer.serial_conn)
-                    else "no dongle detected"
+                    "connected" if (sniffer and sniffer.serial_conn) else "no dongle detected"
                 ),
             },
         },
@@ -376,9 +376,7 @@ async def discover_descriptors(address: str, char_uuid: str):
     return {
         "address": address,
         "characteristic_uuid": char_uuid,
-        "descriptors": [
-            {"uuid": desc.uuid, "handle": desc.handle} for desc in descriptors
-        ],
+        "descriptors": [{"uuid": desc.uuid, "handle": desc.handle} for desc in descriptors],
         "count": len(descriptors),
     }
 
@@ -412,8 +410,7 @@ async def discover_all_services(address: str):
                     "handle": char.handle,
                     "properties": char.properties,
                     "descriptors": [
-                        {"uuid": desc.uuid, "handle": desc.handle}
-                        for desc in descriptors
+                        {"uuid": desc.uuid, "handle": desc.handle} for desc in descriptors
                     ],
                 }
             )
@@ -431,13 +428,9 @@ async def discover_all_services(address: str):
         "address": address,
         "services": detailed_services,
         "services_count": len(detailed_services),
-        "total_characteristics": sum(
-            len(s["characteristics"]) for s in detailed_services
-        ),
+        "total_characteristics": sum(len(s["characteristics"]) for s in detailed_services),
         "total_descriptors": sum(
-            len(c["descriptors"])
-            for s in detailed_services
-            for c in s["characteristics"]
+            len(c["descriptors"]) for s in detailed_services for c in s["characteristics"]
         ),
     }
 
@@ -446,9 +439,7 @@ async def discover_all_services(address: str):
 async def read_characteristic(address: str, char_uuid: str):
     """Read a characteristic value"""
     if not mac_ble:
-        raise HTTPException(
-            status_code=503, detail="MacBook BLE interface not available"
-        )
+        raise HTTPException(status_code=503, detail="MacBook BLE interface not available")
 
     try:
         value = await mac_ble.read_characteristic(address, char_uuid)
@@ -469,9 +460,7 @@ async def read_characteristic(address: str, char_uuid: str):
 async def write_characteristic(address: str, char_uuid: str, request: dict):
     """Write a value to a characteristic"""
     if not mac_ble:
-        raise HTTPException(
-            status_code=503, detail="MacBook BLE interface not available"
-        )
+        raise HTTPException(status_code=503, detail="MacBook BLE interface not available")
 
     try:
         # Get value from request body
@@ -484,14 +473,10 @@ async def write_characteristic(address: str, char_uuid: str, request: dict):
         except ValueError:
             raise HTTPException(status_code=400, detail="Invalid hex value")
 
-        success = await mac_ble.write_characteristic(
-            address, char_uuid, value_bytes, with_response
-        )
+        success = await mac_ble.write_characteristic(address, char_uuid, value_bytes, with_response)
 
         if not success:
-            raise HTTPException(
-                status_code=400, detail="Failed to write characteristic"
-            )
+            raise HTTPException(status_code=400, detail="Failed to write characteristic")
 
         return {
             "address": address,
@@ -558,7 +543,7 @@ async def websocket_stream(websocket: WebSocket):
     try:
         # Keep connection alive
         while True:
-            data = await websocket.receive_text()
+            await websocket.receive_text()
             # Handle any client commands if needed
     except WebSocketDisconnect:
         active_connections.remove(websocket)
@@ -645,9 +630,7 @@ async def respond_to_pairing(address: str, response: str):
 async def get_channel_stats():
     """Get channel hopping statistics"""
     if not sniffer or not sniffer.channel_hopper:
-        raise HTTPException(
-            status_code=404, detail="Sniffer or channel hopper not available"
-        )
+        raise HTTPException(status_code=404, detail="Sniffer or channel hopper not available")
 
     stats = sniffer.channel_hopper.get_hop_stats()
     return {
@@ -682,9 +665,7 @@ async def toggle_channel_hopping(enabled: bool):
 async def get_auto_connect_status():
     """Get Auto-Connect Manager status and all managed connections"""
     if not auto_connect_manager:
-        raise HTTPException(
-            status_code=503, detail="Auto-Connect Manager not initialized"
-        )
+        raise HTTPException(status_code=503, detail="Auto-Connect Manager not initialized")
 
     return {
         "manager_running": auto_connect_manager._running,
@@ -696,15 +677,11 @@ async def get_auto_connect_status():
 async def get_device_auto_connect_status(address: str):
     """Get auto-connect status for a specific device"""
     if not auto_connect_manager:
-        raise HTTPException(
-            status_code=503, detail="Auto-Connect Manager not initialized"
-        )
+        raise HTTPException(status_code=503, detail="Auto-Connect Manager not initialized")
 
     status = auto_connect_manager.get_connection_status(address)
     if not status:
-        raise HTTPException(
-            status_code=404, detail="Device not found in auto-connect manager"
-        )
+        raise HTTPException(status_code=404, detail="Device not found in auto-connect manager")
 
     return status
 
@@ -724,9 +701,7 @@ async def add_device_to_auto_connect(
 ):
     """Add a device to auto-connect management with custom configuration"""
     if not auto_connect_manager:
-        raise HTTPException(
-            status_code=503, detail="Auto-Connect Manager not initialized"
-        )
+        raise HTTPException(status_code=503, detail="Auto-Connect Manager not initialized")
 
     config = ConnectionConfig(
         max_retries=max_retries,
@@ -753,14 +728,10 @@ async def add_device_to_auto_connect(
 async def remove_device_from_auto_connect(address: str):
     """Remove a device from auto-connect management"""
     if not auto_connect_manager:
-        raise HTTPException(
-            status_code=503, detail="Auto-Connect Manager not initialized"
-        )
+        raise HTTPException(status_code=503, detail="Auto-Connect Manager not initialized")
 
     if address not in auto_connect_manager.managed_connections:
-        raise HTTPException(
-            status_code=404, detail="Device not found in auto-connect manager"
-        )
+        raise HTTPException(status_code=404, detail="Device not found in auto-connect manager")
 
     auto_connect_manager.remove_managed_device(address)
 
@@ -774,14 +745,10 @@ async def remove_device_from_auto_connect(address: str):
 async def enable_device_auto_connect(address: str):
     """Enable auto-connect for a specific device"""
     if not auto_connect_manager:
-        raise HTTPException(
-            status_code=503, detail="Auto-Connect Manager not initialized"
-        )
+        raise HTTPException(status_code=503, detail="Auto-Connect Manager not initialized")
 
     if address not in auto_connect_manager.managed_connections:
-        raise HTTPException(
-            status_code=404, detail="Device not found in auto-connect manager"
-        )
+        raise HTTPException(status_code=404, detail="Device not found in auto-connect manager")
 
     auto_connect_manager.enable_device(address)
 
@@ -795,14 +762,10 @@ async def enable_device_auto_connect(address: str):
 async def disable_device_auto_connect(address: str):
     """Disable auto-connect for a specific device"""
     if not auto_connect_manager:
-        raise HTTPException(
-            status_code=503, detail="Auto-Connect Manager not initialized"
-        )
+        raise HTTPException(status_code=503, detail="Auto-Connect Manager not initialized")
 
     if address not in auto_connect_manager.managed_connections:
-        raise HTTPException(
-            status_code=404, detail="Device not found in auto-connect manager"
-        )
+        raise HTTPException(status_code=404, detail="Device not found in auto-connect manager")
 
     auto_connect_manager.disable_device(address)
 
@@ -816,14 +779,10 @@ async def disable_device_auto_connect(address: str):
 async def pause_device_auto_connect(address: str, duration: float = 60.0):
     """Pause auto-connect for a specific device for a specified duration (seconds)"""
     if not auto_connect_manager:
-        raise HTTPException(
-            status_code=503, detail="Auto-Connect Manager not initialized"
-        )
+        raise HTTPException(status_code=503, detail="Auto-Connect Manager not initialized")
 
     if address not in auto_connect_manager.managed_connections:
-        raise HTTPException(
-            status_code=404, detail="Device not found in auto-connect manager"
-        )
+        raise HTTPException(status_code=404, detail="Device not found in auto-connect manager")
 
     auto_connect_manager.pause_device(address, duration)
 
@@ -837,14 +796,10 @@ async def pause_device_auto_connect(address: str, duration: float = 60.0):
 async def get_device_connection_metrics(address: str):
     """Get detailed connection metrics for a specific device"""
     if not auto_connect_manager:
-        raise HTTPException(
-            status_code=503, detail="Auto-Connect Manager not initialized"
-        )
+        raise HTTPException(status_code=503, detail="Auto-Connect Manager not initialized")
 
     if address not in auto_connect_manager.managed_connections:
-        raise HTTPException(
-            status_code=404, detail="Device not found in auto-connect manager"
-        )
+        raise HTTPException(status_code=404, detail="Device not found in auto-connect manager")
 
     connection = auto_connect_manager.managed_connections[address]
 
@@ -857,9 +812,7 @@ async def get_device_connection_metrics(address: str):
         "next_retry_delay": (
             connection.calculate_retry_delay() if connection.retry_count > 0 else 0
         ),
-        "paused_until": (
-            connection.pause_until.isoformat() if connection.pause_until else None
-        ),
+        "paused_until": (connection.pause_until.isoformat() if connection.pause_until else None),
     }
 
 
@@ -867,14 +820,10 @@ async def get_device_connection_metrics(address: str):
 async def reset_device_connection_metrics(address: str):
     """Reset connection metrics for a specific device"""
     if not auto_connect_manager:
-        raise HTTPException(
-            status_code=503, detail="Auto-Connect Manager not initialized"
-        )
+        raise HTTPException(status_code=503, detail="Auto-Connect Manager not initialized")
 
     if address not in auto_connect_manager.managed_connections:
-        raise HTTPException(
-            status_code=404, detail="Device not found in auto-connect manager"
-        )
+        raise HTTPException(status_code=404, detail="Device not found in auto-connect manager")
 
     connection = auto_connect_manager.managed_connections[address]
     connection.metrics = ConnectionMetrics()
@@ -890,9 +839,7 @@ async def reset_device_connection_metrics(address: str):
 async def get_auto_connect_events():
     """Get recent auto-connect events (this would typically be stored in a log)"""
     if not auto_connect_manager:
-        raise HTTPException(
-            status_code=503, detail="Auto-Connect Manager not initialized"
-        )
+        raise HTTPException(status_code=503, detail="Auto-Connect Manager not initialized")
 
     # This is a placeholder - in a real implementation, you'd want to store events
     return {
@@ -944,6 +891,4 @@ async def auto_connect_events_websocket(websocket: WebSocket):
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(
-        "fastapi_server:app", host="0.0.0.0", port=8000, reload=True, log_level="info"
-    )
+    uvicorn.run("fastapi_server:app", host="0.0.0.0", port=8000, reload=True, log_level="info")

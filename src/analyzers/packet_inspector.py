@@ -185,9 +185,7 @@ class PacketInspector:
 
         return flags
 
-    def _check_anomalies(
-        self, packet: BLEPacket, parsed_data: Dict[str, Any]
-    ) -> List[str]:
+    def _check_anomalies(self, packet: BLEPacket, parsed_data: Dict[str, Any]) -> List[str]:
         """Check for packet anomalies or suspicious patterns"""
         warnings = []
 

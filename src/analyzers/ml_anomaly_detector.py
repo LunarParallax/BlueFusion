@@ -2,15 +2,15 @@
 ML-Based Anomaly Detection for BLE Packets
 
 This module provides machine learning-powered anomaly detection for BLE traffic analysis.
-It uses multiple algorithms including Isolation Forest, Local Outlier Factor, and 
+It uses multiple algorithms including Isolation Forest, Local Outlier Factor, and
 statistical methods to detect unusual patterns in BLE packet data.
 """
 
 import logging
 from collections import deque
-from datetime import datetime, timedelta
+from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 from pydantic import BaseModel, Field
@@ -114,9 +114,7 @@ class PacketFeatureExtractor:
             byte_array = np.frombuffer(packet.data, dtype=np.uint8)
             byte_counts = np.bincount(byte_array, minlength=256)
             probabilities = byte_counts / len(packet.data)
-            entropy = -np.sum(
-                probabilities * np.log2(probabilities + 1e-10)
-            )
+            entropy = -np.sum(probabilities * np.log2(probabilities + 1e-10))
             # Normalize entropy (max entropy for bytes is 8 bits)
             features["byte_entropy"] = entropy / 8.0
         else:
@@ -163,7 +161,7 @@ class PacketFeatureExtractor:
     def _detect_repeating_patterns(self, data: bytes, max_pattern_length: int = 8) -> float:
         """
         Detect repeating byte patterns in data
-        
+
         Returns a score from 0 (no repetition) to 1 (highly repetitive)
         """
         if len(data) < 4:
@@ -176,7 +174,7 @@ class PacketFeatureExtractor:
             for i in range(0, len(data) - pattern_len + 1, pattern_len):
                 if data[i : i + pattern_len] == pattern:
                     occurrences += 1
-            
+
             if occurrences > 1:
                 score = (occurrences * pattern_len) / len(data)
                 max_score = max(max_score, min(score, 1.0))
@@ -191,7 +189,7 @@ class PacketFeatureExtractor:
 class MLAnomalyDetector:
     """
     Machine Learning-based anomaly detector for BLE packets
-    
+
     Uses ensemble of methods:
     - Isolation Forest for outlier detection
     - Local Outlier Factor for density-based anomalies
@@ -224,19 +222,19 @@ class MLAnomalyDetector:
         self.min_training_samples = min_training_samples
 
         self.feature_extractor = PacketFeatureExtractor()
-        
+
         # Feature history for context-aware detection
         self.feature_history: deque = deque(maxlen=window_size)
         self.timestamp_history: deque = deque(maxlen=window_size)
-        
+
         # ML models (initialized on first fit)
         self.isolation_forest = None
         self.lof_model = None
-        
+
         # Statistical baselines
         self.feature_means: Optional[np.ndarray] = None
         self.feature_stds: Optional[np.ndarray] = None
-        
+
         # Training state
         self.is_trained = False
         self.packets_seen = 0
@@ -248,16 +246,14 @@ class MLAnomalyDetector:
     def partial_fit(self, packet: BLEPacket) -> None:
         """
         Incrementally update the model with a new packet
-        
+
         This allows online learning without full retraining
 
         Args:
             packet: BLE packet to learn from
         """
         try:
-            prev_timestamp = (
-                self.timestamp_history[-1] if self.timestamp_history else None
-            )
+            prev_timestamp = self.timestamp_history[-1] if self.timestamp_history else None
             features = self.feature_extractor.extract_features(packet, prev_timestamp)
             feature_vector = self.feature_extractor.features_to_vector(features)
 
@@ -280,10 +276,7 @@ class MLAnomalyDetector:
             self.packets_seen += 1
 
             # Retrain models periodically
-            if (
-                not self.is_trained
-                and len(self.feature_history) >= self.min_training_samples
-            ):
+            if not self.is_trained and len(self.feature_history) >= self.min_training_samples:
                 self._train_models()
 
         except Exception as e:
@@ -335,9 +328,7 @@ class MLAnomalyDetector:
         except Exception as e:
             logger.error(f"Error training models: {e}")
 
-    def detect(
-        self, packet: BLEPacket, update_model: bool = True
-    ) -> AnomalyDetectionResult:
+    def detect(self, packet: BLEPacket, update_model: bool = True) -> AnomalyDetectionResult:
         """
         Detect anomalies in a BLE packet
 
@@ -495,9 +486,7 @@ class MLAnomalyDetector:
 
         return float(np.clip(normalized_score, 0.0, 1.0))
 
-    def _security_anomaly_detection(
-        self, packet: BLEPacket
-    ) -> Tuple[float, List[AnomalyType]]:
+    def _security_anomaly_detection(self, packet: BLEPacket) -> Tuple[float, List[AnomalyType]]:
         """Rule-based security anomaly detection"""
         anomalies = []
         score = 0.0
@@ -532,9 +521,7 @@ class MLAnomalyDetector:
             current_vector = self.feature_extractor.features_to_vector(
                 self.feature_extractor.extract_features(packet)
             )
-            matches = sum(
-                np.allclose(current_vector, v, rtol=0.01) for v in recent_vectors
-            )
+            matches = sum(np.allclose(current_vector, v, rtol=0.01) for v in recent_vectors)
             if matches >= 4:
                 anomalies.append(AnomalyType.SECURITY)
                 score += 0.5
@@ -586,16 +573,13 @@ class MLAnomalyDetector:
         if result.is_anomaly:
             self.stats.total_anomalies_detected += 1
             self.stats.anomaly_rate = (
-                self.stats.total_anomalies_detected
-                / self.stats.total_packets_analyzed
+                self.stats.total_anomalies_detected / self.stats.total_packets_analyzed
             )
 
             # Update by type
             for anomaly_type in result.anomaly_types:
                 key = anomaly_type.value
-                self.stats.anomalies_by_type[key] = (
-                    self.stats.anomalies_by_type.get(key, 0) + 1
-                )
+                self.stats.anomalies_by_type[key] = self.stats.anomalies_by_type.get(key, 0) + 1
 
             # Update by severity
             severity_key = result.severity.value
@@ -606,8 +590,8 @@ class MLAnomalyDetector:
             # Update average score
             n = self.stats.total_anomalies_detected
             self.stats.average_anomaly_score = (
-                (self.stats.average_anomaly_score * (n - 1) + result.anomaly_score) / n
-            )
+                self.stats.average_anomaly_score * (n - 1) + result.anomaly_score
+            ) / n
 
             # Update time range
             if self.stats.time_range is None:
@@ -637,7 +621,7 @@ class MLAnomalyDetector:
 class AnomalyDetectionEngine:
     """
     High-level interface for ML-based anomaly detection
-    
+
     Integrates with PacketInspector to provide seamless anomaly detection
     """
 

@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 import asyncio
-from bleak import BleakScanner
 from datetime import datetime
+
+from bleak import BleakScanner
 
 
 async def simple_ble_test():

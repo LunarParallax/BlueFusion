@@ -31,7 +31,7 @@ To effectively capture BLE traffic, you'll need the following hardware component
      - Designed specifically for Bluetooth experimentation
      - Capable of following frequency hopping
      - Price: ~$125
-   
+
    - **Nordic nRF52840 Dongle**
      - Professional-grade BLE development tool
      - Excellent packet capture capabilities
@@ -75,13 +75,13 @@ To effectively capture BLE traffic, you'll need the following hardware component
    - All Bluetooth traffic is logged automatically
 
 4. **Retrieve Log File**
-   
+
    **For Non-Rooted Devices:**
    ```bash
    adb bugreport > bugreport.zip
    # Extract btsnoop_hci.log from the zip file
    ```
-   
+
    **For Rooted Devices:**
    ```bash
    adb pull /sdcard/btsnoop_hci.log
@@ -125,7 +125,7 @@ bluefusion analyze --btsnoop capture.btsnoop
    ```bash
    # Ubuntu/Debian
    sudo apt-get install ubertooth ubertooth-firmware
-   
+
    # macOS
    brew install ubertooth
    ```
@@ -139,7 +139,7 @@ bluefusion analyze --btsnoop capture.btsnoop
    ```bash
    # Follow all BLE connections
    ubertooth-btle -f
-   
+
    # Target specific device (more reliable)
    ubertooth-btle -t aa:bb:cc:dd:ee:ff
    ```
@@ -150,7 +150,7 @@ bluefusion analyze --btsnoop capture.btsnoop
    mkfifo /tmp/pipe
    ubertooth-btle -f -c /tmp/pipe &
    wireshark -k -i /tmp/pipe
-   
+
    # Save for BlueFusion analysis
    ubertooth-btle -t aa:bb:cc:dd:ee:ff -c capture.pcap
    bluefusion analyze --pcap capture.pcap

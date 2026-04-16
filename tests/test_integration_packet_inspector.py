@@ -2,8 +2,10 @@
 Integration tests for Packet Inspector with Protocol Parsers
 """
 
-import pytest
 from datetime import datetime
+
+import pytest
+
 from src.analyzers import PacketInspector
 from src.analyzers.protocol_parsers import GATTParser
 from src.interfaces.base import BLEPacket, DeviceType

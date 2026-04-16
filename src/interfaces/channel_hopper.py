@@ -31,9 +31,7 @@ class ChannelHopper:
             "packets_per_channel": {ch: 0 for ch in range(40)},
         }
 
-    async def start_hopping(
-        self, channels: Optional[List[int]] = None, interval: float = 0.1
-    ):
+    async def start_hopping(self, channels: Optional[List[int]] = None, interval: float = 0.1):
         """Start automatic channel hopping"""
         if self.hopping_enabled:
             return
@@ -71,9 +69,7 @@ class ChannelHopper:
                 await asyncio.sleep(self.hop_interval)
 
                 # Move to next channel
-                self.current_channel_index = (self.current_channel_index + 1) % len(
-                    self.channels
-                )
+                self.current_channel_index = (self.current_channel_index + 1) % len(self.channels)
 
             except Exception as e:
                 print(f"Channel hop error: {e}")
@@ -147,9 +143,7 @@ class SmartChannelHopper(ChannelHopper):
         self.update_packet_stats(channel)
 
         # Periodically adjust channels based on activity
-        if (
-            datetime.now() - self.last_activity_check
-        ).total_seconds() > self.activity_window:
+        if (datetime.now() - self.last_activity_check).total_seconds() > self.activity_window:
             self._adjust_channels()
 
     def _adjust_channels(self):
@@ -158,9 +152,7 @@ class SmartChannelHopper(ChannelHopper):
             return
 
         # Sort channels by activity
-        sorted_channels = sorted(
-            self.channel_activity.items(), key=lambda x: x[1], reverse=True
-        )
+        sorted_channels = sorted(self.channel_activity.items(), key=lambda x: x[1], reverse=True)
 
         # Focus on top active channels plus advertising channels
         active_channels = [ch for ch, count in sorted_channels[:10] if count > 0]

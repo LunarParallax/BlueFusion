@@ -31,13 +31,9 @@ class MacBookBLE(BLEInterface):
 
     async def initialize(self) -> None:
         """Initialize the MacBook BLE interface"""
-        self.scanner = BleakScanner(
-            detection_callback=self._detection_callback, service_uuids=None
-        )
+        self.scanner = BleakScanner(detection_callback=self._detection_callback, service_uuids=None)
 
-    def _detection_callback(
-        self, device: BleakDevice, advertisement_data: Dict[str, Any]
-    ):
+    def _detection_callback(self, device: BleakDevice, advertisement_data: Dict[str, Any]):
         """Callback for device detection"""
         ble_device = BLEDevice(
             address=device.address,
@@ -64,9 +60,7 @@ class MacBookBLE(BLEInterface):
                 "manufacturer_data": {
                     k: v.hex() for k, v in advertisement_data.manufacturer_data.items()
                 },
-                "service_data": {
-                    k: v.hex() for k, v in advertisement_data.service_data.items()
-                },
+                "service_data": {k: v.hex() for k, v in advertisement_data.service_data.items()},
             },
         )
 
@@ -97,11 +91,8 @@ class MacBookBLE(BLEInterface):
         """Connect to a specific device with optional security requirements"""
         try:
             # Check if we need to pair first
-            if (
-                security_requirements
-                and not self.security_manager.check_security_requirements(
-                    address, security_requirements
-                )
+            if security_requirements and not self.security_manager.check_security_requirements(
+                address, security_requirements
             ):
                 # Need to pair first
                 if not await self.pair_device(address):
@@ -156,9 +147,7 @@ class MacBookBLE(BLEInterface):
             packet = await self._packet_queue.get()
             yield packet
 
-    async def read_characteristic(
-        self, address: str, char_uuid: str
-    ) -> Optional[bytes]:
+    async def read_characteristic(self, address: str, char_uuid: str) -> Optional[bytes]:
         """Read a characteristic from a connected device"""
         if address in self.connected_clients:
             client = self.connected_clients[address]
@@ -229,9 +218,7 @@ class MacBookBLE(BLEInterface):
                 return False
         return False
 
-    async def subscribe_notifications(
-        self, address: str, char_uuid: str, callback
-    ) -> bool:
+    async def subscribe_notifications(self, address: str, char_uuid: str, callback) -> bool:
         """Subscribe to notifications from a characteristic"""
         if address in self.connected_clients:
             client = self.connected_clients[address]
@@ -364,9 +351,7 @@ class MacBookBLE(BLEInterface):
             print(f"Characteristic discovery failed: {e}")
             return []
 
-    async def discover_descriptors(
-        self, address: str, char_uuid: str
-    ) -> List[BLEDescriptor]:
+    async def discover_descriptors(self, address: str, char_uuid: str) -> List[BLEDescriptor]:
         """Discover descriptors for a specific characteristic"""
         if address not in self.connected_clients:
             print(f"Device {address} not connected")

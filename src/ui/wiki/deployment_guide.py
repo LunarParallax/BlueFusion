@@ -113,7 +113,7 @@ interfaces:
     enabled: true
     scan_timeout: 30
     max_connections: 5
-  
+
   sniffer:
     enabled: false
     port: "/dev/tty.usbserial-*"
@@ -138,7 +138,7 @@ security:
 database:
   enabled: false
   url: "sqlite:///bluefusion.db"
-  
+
 cache:
   enabled: true
   ttl: 300  # seconds
@@ -368,16 +368,16 @@ python bluefusion.py config import < config-backup.yaml
 server {
     listen 443 ssl;
     server_name bluefusion.yourdomain.com;
-    
+
     ssl_certificate /etc/ssl/certs/bluefusion.crt;
     ssl_certificate_key /etc/ssl/private/bluefusion.key;
-    
+
     location /api/ {
         proxy_pass http://localhost:8000/;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
     }
-    
+
     location / {
         proxy_pass http://localhost:7860/;
         proxy_http_version 1.1;

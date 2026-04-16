@@ -3,18 +3,18 @@
 FastAPI test suite for BlueFusion API
 """
 
+import os
+import sys
+from unittest.mock import AsyncMock, MagicMock, patch
+
 import pytest
 from fastapi.testclient import TestClient
-from unittest.mock import AsyncMock, MagicMock, patch
-import sys
-import os
 
 # Add parent directory to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from src.api.fastapi_server import app, mac_ble, sniffer
-from src.interfaces.base import BLEDevice, BLEPacket, DeviceType
-from datetime import datetime
+from src.api.fastapi_server import app
+from src.interfaces.base import BLEDevice
 
 
 @pytest.fixture
@@ -98,9 +98,7 @@ class TestScanningEndpoints:
 
     @patch("main.mac_ble")
     @patch("main.sniffer")
-    def test_start_scanning_both(
-        self, mock_sniff, mock_mac, client, mock_mac_ble, mock_sniffer
-    ):
+    def test_start_scanning_both(self, mock_sniff, mock_mac, client, mock_mac_ble, mock_sniffer):
         """Test starting scan on both interfaces"""
         mock_mac.__bool__.return_value = True
         mock_mac.start_scanning = mock_mac_ble.start_scanning
@@ -108,9 +106,7 @@ class TestScanningEndpoints:
         mock_sniff.serial_conn = mock_sniffer.serial_conn
         mock_sniff.start_scanning = mock_sniffer.start_scanning
 
-        response = client.post(
-            "/scan/start", json={"interface": "both", "mode": "active"}
-        )
+        response = client.post("/scan/start", json={"interface": "both", "mode": "active"})
 
         assert response.status_code == 200
         data = response.json()
@@ -124,18 +120,14 @@ class TestScanningEndpoints:
         mock_mac.__bool__.return_value = True
         mock_mac.start_scanning = mock_mac_ble.start_scanning
 
-        response = client.post(
-            "/scan/start", json={"interface": "macbook", "mode": "passive"}
-        )
+        response = client.post("/scan/start", json={"interface": "macbook", "mode": "passive"})
 
         assert response.status_code == 200
         mock_mac_ble.start_scanning.assert_called_with(passive=True)
 
     @patch("main.mac_ble")
     @patch("main.sniffer")
-    def test_stop_scanning(
-        self, mock_sniff, mock_mac, client, mock_mac_ble, mock_sniffer
-    ):
+    def test_stop_scanning(self, mock_sniff, mock_mac, client, mock_mac_ble, mock_sniffer):
         """Test stopping scan"""
         mock_mac.__bool__.return_value = True
         mock_mac.is_running = True
@@ -156,9 +148,7 @@ class TestDeviceEndpoints:
 
     @patch("main.mac_ble")
     @patch("main.sniffer")
-    def test_get_devices(
-        self, mock_sniff, mock_mac, client, mock_mac_ble, mock_sniffer
-    ):
+    def test_get_devices(self, mock_sniff, mock_mac, client, mock_mac_ble, mock_sniffer):
         """Test getting discovered devices"""
         mock_mac.__bool__.return_value = True
         mock_mac.get_devices = mock_mac_ble.get_devices
@@ -206,9 +196,7 @@ class TestDeviceEndpoints:
         mock_mac.__bool__.return_value = True
         mock_mac.read_characteristic = mock_mac_ble.read_characteristic
 
-        response = client.get(
-            "/read/00:11:22:33:44:55/00002a00-0000-1000-8000-00805f9b34fb"
-        )
+        response = client.get("/read/00:11:22:33:44:55/00002a00-0000-1000-8000-00805f9b34fb")
 
         assert response.status_code == 200
         data = response.json()

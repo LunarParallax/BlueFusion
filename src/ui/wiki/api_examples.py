@@ -218,10 +218,10 @@ async def async_scan():
         # Start scan
         async with session.post(f"{BASE_URL}/scan/start") as resp:
             print(await resp.json())
-        
+
         # Wait for results
         await asyncio.sleep(5)
-        
+
         # Get devices
         async with session.get(f"{BASE_URL}/devices") as resp:
             devices = await resp.json()

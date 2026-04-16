@@ -52,9 +52,7 @@ def get_available_serial_ports() -> List[Dict[str, str]]:
     """
     ports = []
     for port in serial.tools.list_ports.comports():
-        ports.append(
-            {"port": port.device, "description": port.description, "hwid": port.hwid}
-        )
+        ports.append({"port": port.device, "description": port.description, "hwid": port.hwid})
     return ports
 
 

@@ -50,7 +50,7 @@ BLE has become fundamental to IoT ecosystems, with widespread adoption across:
 **Bluetooth** is a short-range wireless protocol with the following characteristics:
 - **Frequency**: Operates on 2.4 GHz band (shared with Wi-Fi and microwave ovens)
 - **Technology**: Uses Frequency-Hopping Spread Spectrum (FHSS) for enhanced reliability
-- **Advantages**: 
+- **Advantages**:
   - Low power consumption
   - Widespread support across mobile devices and computers
   - Robust interference handling

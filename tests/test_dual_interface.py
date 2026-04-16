@@ -6,8 +6,9 @@ Tests both MacBook BLE and Sniffer Dongle simultaneously
 
 import asyncio
 import sys
-from datetime import datetime
 from collections import defaultdict
+from datetime import datetime
+
 import serial.tools.list_ports
 
 from src.interfaces.macbook_ble import MacBookBLE
@@ -143,7 +144,6 @@ class DualInterfaceTest:
         self.sniffer_packets.clear()
 
         # Start both interfaces
-        tasks = []
 
         try:
             # Start MacBook BLE
@@ -163,12 +163,12 @@ class DualInterfaceTest:
 
             # Print statistics
             print("\n=== Dual Operation Statistics ===")
-            print(f"\nMacBook BLE Packets:")
+            print("\nMacBook BLE Packets:")
             for ptype, count in self.mac_packets.items():
                 print(f"  {ptype}: {count}")
 
             if self.sniffer.serial_conn:
-                print(f"\nSniffer Packets:")
+                print("\nSniffer Packets:")
                 for ptype, count in self.sniffer_packets.items():
                     print(f"  {ptype}: {count}")
 

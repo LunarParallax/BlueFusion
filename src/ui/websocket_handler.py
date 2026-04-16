@@ -122,12 +122,8 @@ class WebSocketHandler:
         total_devices = len(self.device_data)
         total_packets = sum(d["packets"] for d in self.device_data.values())
 
-        mac_devices = sum(
-            1 for d in self.device_data.values() if "macbook_ble" in d["sources"]
-        )
-        snf_devices = sum(
-            1 for d in self.device_data.values() if "sniffer_dongle" in d["sources"]
-        )
+        mac_devices = sum(1 for d in self.device_data.values() if "macbook_ble" in d["sources"])
+        snf_devices = sum(1 for d in self.device_data.values() if "sniffer_dongle" in d["sources"])
 
         return {
             "total_devices": total_devices,

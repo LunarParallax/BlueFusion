@@ -3,11 +3,12 @@ Tests for BLE AES-CCM Cryptography Utilities
 """
 
 import pytest
+
 from src.utils.ble_crypto import (
     BLEAESCCMDecryptor,
-    decrypt_ble_packet_aes_ccm,
-    decrypt_ble_data_channel_aes_ccm,
     BLEDecryptionError,
+    decrypt_ble_data_channel_aes_ccm,
+    decrypt_ble_packet_aes_ccm,
 )
 
 
@@ -38,9 +39,7 @@ class TestBLEAESCCMDecryptor:
         ciphertext = cipher.encrypt(nonce, self.test_plaintext, aad)
 
         # Test decryption
-        result = self.decryptor.decrypt(
-            self.test_key, nonce, ciphertext, aad, tag_length=4
-        )
+        result = self.decryptor.decrypt(self.test_key, nonce, ciphertext, aad, tag_length=4)
 
         assert result == self.test_plaintext
 
@@ -57,9 +56,7 @@ class TestBLEAESCCMDecryptor:
         # Corrupt the tag (last 4 bytes)
         corrupted = ciphertext[:-4] + b"\x00\x00\x00\x00"
 
-        result = self.decryptor.decrypt(
-            self.test_key, nonce, corrupted, aad, tag_length=4
-        )
+        result = self.decryptor.decrypt(self.test_key, nonce, corrupted, aad, tag_length=4)
 
         assert result is None
 
@@ -68,9 +65,7 @@ class TestBLEAESCCMDecryptor:
         iv = bytes.fromhex("1234567890abcdef")
         packet_counter = 0x123456
 
-        nonce = self.decryptor.construct_ble_nonce(
-            iv, packet_counter, is_master_to_slave=True
-        )
+        nonce = self.decryptor.construct_ble_nonce(iv, packet_counter, is_master_to_slave=True)
 
         assert len(nonce) == 13
         assert nonce[:8] == iv
@@ -82,9 +77,7 @@ class TestBLEAESCCMDecryptor:
         iv = bytes.fromhex("1234567890abcdef")
         packet_counter = 0x123456
 
-        nonce = self.decryptor.construct_ble_nonce(
-            iv, packet_counter, is_master_to_slave=False
-        )
+        nonce = self.decryptor.construct_ble_nonce(iv, packet_counter, is_master_to_slave=False)
 
         assert len(nonce) == 13
         assert nonce[:8] == iv
@@ -127,9 +120,7 @@ class TestBLEAESCCMDecryptor:
         plaintext = b"Test BLE data"
 
         # Construct nonce
-        nonce = self.decryptor.construct_ble_nonce(
-            iv, packet_counter, is_master_to_slave=True
-        )
+        nonce = self.decryptor.construct_ble_nonce(iv, packet_counter, is_master_to_slave=True)
 
         # Create PDU header
         header = b"\x02"  # Data PDU
@@ -167,9 +158,7 @@ class TestBLEAESCCMDecryptor:
 
         # Construct IV and nonce as the function would
         iv = skd_slave + skd_master
-        nonce = self.decryptor.construct_ble_nonce(
-            iv, packet_counter, is_master_to_slave=True
-        )
+        nonce = self.decryptor.construct_ble_nonce(iv, packet_counter, is_master_to_slave=True)
 
         # Encrypt
         cipher = AESCCM(ltk, tag_length=4)
@@ -196,14 +185,22 @@ class TestBLEAESCCMDecryptor:
         """Test that invalid nonce lengths raise BLEDecryptionError"""
         with pytest.raises(BLEDecryptionError, match="Nonce must be 13 bytes"):
             self.decryptor.decrypt(
-                b"\x00" * 16, b"\x00" * 10, b"ciphertext", None, 4  # Wrong length
+                b"\x00" * 16,
+                b"\x00" * 10,
+                b"ciphertext",
+                None,
+                4,  # Wrong length
             )
 
     def test_invalid_tag_length(self):
         """Test that invalid tag lengths raise BLEDecryptionError"""
         with pytest.raises(BLEDecryptionError, match="Invalid tag length"):
             self.decryptor.decrypt(
-                b"\x00" * 16, b"\x00" * 13, b"ciphertext", None, 5  # Invalid tag length
+                b"\x00" * 16,
+                b"\x00" * 13,
+                b"ciphertext",
+                None,
+                5,  # Invalid tag length
             )
 
     def test_invalid_iv_length_in_nonce_construction(self):

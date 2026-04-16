@@ -4,7 +4,6 @@ BlueFusion Packet Analysis Framework
 Includes traditional packet inspection and ML-based anomaly detection.
 """
 
-from .packet_inspector import InspectionResult, PacketInspector
 from .ml_anomaly_detector import (
     AnomalyDetectionEngine,
     AnomalyDetectionResult,
@@ -13,6 +12,7 @@ from .ml_anomaly_detector import (
     AnomalyType,
     MLAnomalyDetector,
 )
+from .packet_inspector import InspectionResult, PacketInspector
 
 __all__ = [
     "PacketInspector",

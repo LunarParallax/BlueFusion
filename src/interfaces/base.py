@@ -135,23 +135,17 @@ class BLEInterface(ABC):
         pass
 
     @abstractmethod
-    async def discover_descriptors(
-        self, address: str, char_uuid: str
-    ) -> List[BLEDescriptor]:
+    async def discover_descriptors(self, address: str, char_uuid: str) -> List[BLEDescriptor]:
         """Discover descriptors for a specific characteristic"""
         pass
 
     @abstractmethod
-    async def read_characteristic(
-        self, address: str, char_uuid: str
-    ) -> Optional[bytes]:
+    async def read_characteristic(self, address: str, char_uuid: str) -> Optional[bytes]:
         """Read value from a characteristic"""
         pass
 
     @abstractmethod
-    async def write_characteristic(
-        self, address: str, char_uuid: str, data: bytes
-    ) -> bool:
+    async def write_characteristic(self, address: str, char_uuid: str, data: bytes) -> bool:
         """Write value to a characteristic"""
         pass
 
@@ -183,10 +177,7 @@ class BLEInterface(ABC):
         """Handle security-related errors during operations"""
         # Check if this is a security error that can be resolved by pairing
         error_msg = str(error).lower()
-        if any(
-            keyword in error_msg
-            for keyword in ["auth", "encrypt", "pair", "bond", "security"]
-        ):
+        if any(keyword in error_msg for keyword in ["auth", "encrypt", "pair", "bond", "security"]):
             # Try to pair and retry
             if await self.pair_device(address):
                 return True

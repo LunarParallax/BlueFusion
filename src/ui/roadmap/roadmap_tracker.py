@@ -549,8 +549,8 @@ def get_feature_stats():
     partial = 0
     pending = 0
 
-    for category, features in ROADMAP_FEATURES.items():
-        for feature, info in features.items():
+    for _category, features in ROADMAP_FEATURES.items():
+        for _feature, info in features.items():
             total += 1
             if info["status"] == "completed":
                 completed += 1

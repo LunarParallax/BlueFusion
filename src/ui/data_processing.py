@@ -49,9 +49,7 @@ class DataProcessor:
             }
 
             # Only rename columns that exist
-            df = df.rename(
-                columns={k: v for k, v in column_mapping.items() if k in df.columns}
-            )
+            df = df.rename(columns={k: v for k, v in column_mapping.items() if k in df.columns})
 
             # Format timestamps if present
             if "Last Seen" in df.columns:

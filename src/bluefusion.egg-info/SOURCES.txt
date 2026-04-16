@@ -5,6 +5,7 @@ README.md
 bluefusion.py
 pyproject.toml
 requirements.txt
+__pycache__/bluefusion.cpython-312.pyc
 public/brand_guide.html
 public/assets/BlueFusion_icon_pack.zip
 public/assets/icon.png
@@ -24,6 +25,7 @@ public/assets/BlueFusion_icon_pack/bluefusion_96x96.png
 public/assets/BlueFusion_icon_pack/logo_info.md
 public/docs/AUTO_CONNECT_MANAGER.md
 public/docs/hex_pattern_matcher.md
+public/docs/ml_anomaly_detection.md
 public/examples/auto_connect_demo.py
 public/examples/bluefusion_demo.py
 public/examples/hex_pattern_matcher_demo.py
@@ -41,14 +43,20 @@ public/roadmap/potentionadditions.md
 scripts/install.sh
 scripts/prepare_release.sh
 src/__init__.py
+src/__pycache__/__init__.cpython-312.pyc
 src/analyzers/__init__.py
 src/analyzers/hex_pattern_matcher.py
 src/analyzers/ml_anomaly_detector.py
 src/analyzers/packet_inspector.py
+src/analyzers/vulnerability_reporter.py
+src/analyzers/__pycache__/__init__.cpython-312.pyc
+src/analyzers/__pycache__/ml_anomaly_detector.cpython-312.pyc
+src/analyzers/__pycache__/packet_inspector.cpython-312.pyc
 src/analyzers/protocol_parsers/__init__.py
 src/analyzers/protocol_parsers/base.py
 src/analyzers/protocol_parsers/gatt.py
 src/api/fastapi_server.py
+src/api/__pycache__/fastapi_server.cpython-312.pyc
 src/bluefusion.egg-info/PKG-INFO
 src/bluefusion.egg-info/SOURCES.txt
 src/bluefusion.egg-info/dependency_links.txt
@@ -62,6 +70,10 @@ src/interfaces/channel_hopper.py
 src/interfaces/macbook_ble.py
 src/interfaces/security_manager.py
 src/interfaces/sniffer_dongle.py
+src/interfaces/__pycache__/base.cpython-312.pyc
+src/interfaces/__pycache__/macbook_ble.cpython-312.pyc
+src/interfaces/__pycache__/security_manager.cpython-312.pyc
+src/interfaces/__pycache__/sniffer_dongle.cpython-312.pyc
 src/ui/__init__.py
 src/ui/characteristic_monitor.py
 src/ui/client.py
@@ -105,6 +117,10 @@ src/utils/ble_crypto/__init__.py
 src/utils/ble_crypto/aes_ccm.py
 src/utils/ble_crypto/base.py
 src/utils/ble_crypto/xor.py
+src/utils/ble_crypto/__pycache__/__init__.cpython-312.pyc
+src/utils/ble_crypto/__pycache__/aes_ccm.cpython-312.pyc
+src/utils/ble_crypto/__pycache__/base.cpython-312.pyc
+src/utils/ble_crypto/__pycache__/xor.cpython-312.pyc
 tests/README.md
 tests/debug_cors.py
 tests/fix_gradio_connectivity.py
@@ -125,3 +141,5 @@ tests/test_packet_inspector.py
 tests/test_simple_ble.py
 tests/test_ui_buttons.py
 tests/test_ui_workflow.md
+tests/test_vulnerability_reporter.py
+tests/__pycache__/test_ml_anomaly_detection.cpython-312-pytest-9.0.2.pyc

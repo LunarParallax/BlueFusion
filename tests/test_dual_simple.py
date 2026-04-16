@@ -6,12 +6,11 @@ Simple dual interface test without pydantic dependencies
 import asyncio
 import sys
 from datetime import datetime
-import serial
-import serial.tools.list_ports
 
 # Direct imports to avoid pydantic issues
-import bleak
-from bleak import BleakScanner, BleakClient
+import serial
+import serial.tools.list_ports
+from bleak import BleakScanner
 
 
 async def test_macbook_ble():
@@ -23,9 +22,7 @@ async def test_macbook_ble():
 
     def callback(device, adv_data):
         devices_found[device.address] = {"name": device.name, "rssi": adv_data.rssi}
-        print(
-            f"[MAC] Found: {device.address} | {device.name or 'Unknown'} | RSSI: {adv_data.rssi}"
-        )
+        print(f"[MAC] Found: {device.address} | {device.name or 'Unknown'} | RSSI: {adv_data.rssi}")
 
     scanner = BleakScanner(detection_callback=callback)
 

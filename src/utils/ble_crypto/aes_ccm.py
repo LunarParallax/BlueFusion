@@ -44,17 +44,16 @@ class BLEAESCCMDecryptor(BLEDecryptorBase):
 
         Returns:
             Decrypted plaintext bytes, or None if decryption fails
+
+        Raises:
+            BLEDecryptionError: If input validation fails
         """
         try:
-            # Validate inputs
+            # Validate inputs - these should raise exceptions
             if len(key) != 16:
-                raise BLEDecryptionError(
-                    f"Key must be 16 bytes (128 bits), got {len(key)}"
-                )
+                raise BLEDecryptionError(f"Key must be 16 bytes (128 bits), got {len(key)}")
             if len(nonce) != 13:
-                raise BLEDecryptionError(
-                    f"Nonce must be 13 bytes for BLE, got {len(nonce)}"
-                )
+                raise BLEDecryptionError(f"Nonce must be 13 bytes for BLE, got {len(nonce)}")
             if tag_length not in [4, 6, 8, 10, 12, 14, 16]:
                 raise BLEDecryptionError(f"Invalid tag length: {tag_length}")
 
@@ -64,11 +63,12 @@ class BLEAESCCMDecryptor(BLEDecryptorBase):
             # Decrypt and verify
             plaintext = cipher.decrypt(nonce, ciphertext, associated_data)
 
-            self.logger.debug(
-                f"Successfully decrypted {len(plaintext)} bytes using AES-CCM"
-            )
+            self.logger.debug(f"Successfully decrypted {len(plaintext)} bytes using AES-CCM")
             return plaintext
 
+        except BLEDecryptionError:
+            # Re-raise validation errors
+            raise
         except Exception as e:
             self.logger.error(f"AES-CCM decryption failed: {e}")
             return None
@@ -136,9 +136,7 @@ def decrypt_ble_packet_aes_ccm(
         return None
 
     # Construct nonce
-    nonce = _aes_ccm_decryptor.construct_ble_nonce(
-        iv, packet_counter, is_master_to_slave
-    )
+    nonce = _aes_ccm_decryptor.construct_ble_nonce(iv, packet_counter, is_master_to_slave)
 
     # Use header as AAD
     aad = header + encrypted_pdu[1:3]  # Header + length field
@@ -176,9 +174,7 @@ def decrypt_ble_data_channel_aes_ccm(
     iv = skd_slave + skd_master  # 8 bytes total
 
     # Construct nonce
-    nonce = _aes_ccm_decryptor.construct_ble_nonce(
-        iv, packet_counter, is_master_to_slave
-    )
+    nonce = _aes_ccm_decryptor.construct_ble_nonce(iv, packet_counter, is_master_to_slave)
 
     # Decrypt without AAD for data channel
     return _aes_ccm_decryptor.decrypt(session_key, nonce, encrypted_data, None, 4)

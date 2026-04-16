@@ -289,7 +289,7 @@ patterns.predict_next()    # Anticipate behavior
 2. **Convert Display Filters**
    ```bash
    # Wireshark: btatt.opcode == 0x12 && frame.len > 20
-   # BlueFusion: 
+   # BlueFusion:
    bluefusion filter "att.write_request and length > 20"
    ```
 
@@ -371,7 +371,7 @@ analysis.enhance()  # Add BLE intelligence
 analysis.report()   # Generate insights
 
 # Export for Wireshark if needed
-analysis.export("enhanced_capture.pcapng", 
+analysis.export("enhanced_capture.pcapng",
                 format="wireshark-enhanced")
 ```
 
@@ -413,7 +413,7 @@ bluefusion convert last-analysis --to pcapng > for-wireshark.pcapng
 While traditional tools like Wireshark remain valuable for general protocol analysis, BlueFusion represents the evolution of BLE-specific security tools. Its integrated approach, intelligent analysis, and modern architecture make it the optimal choice for:
 
 - Security professionals focusing on IoT/BLE
-- Developers needing quick debugging capabilities  
+- Developers needing quick debugging capabilities
 - Teams requiring collaborative analysis features
 - Organizations building automated security pipelines
 

@@ -248,7 +248,7 @@ def inspect_selected_packet(packet_index: int):
     """Inspect a selected packet"""
     if packet_index is None:
         return (
-            """No packet selected. 
+            """No packet selected.
 
 **To use the Packet Inspector:**
 1. Go to the **Control** tab
@@ -284,9 +284,7 @@ The packet inspector will show:
                 }
             else:
                 packet_data = {
-                    "timestamp": getattr(
-                        packet, "timestamp", datetime.now().isoformat()
-                    ),
+                    "timestamp": getattr(packet, "timestamp", datetime.now().isoformat()),
                     "source": getattr(packet, "source", "unknown"),
                     "address": getattr(packet, "address", ""),
                     "rssi": getattr(packet, "rssi", -65),
@@ -321,9 +319,7 @@ def get_inspector_statistics():
 # Create Gradio interface
 with gr.Blocks(title="BlueFusion BLE Monitor", theme=gr.themes.Soft()) as app:
     gr.Markdown("# 🔵 BlueFusion BLE Monitor")
-    gr.Markdown(
-        "Dual interface BLE monitoring with MacBook native BLE and USB sniffer dongle"
-    )
+    gr.Markdown("Dual interface BLE monitoring with MacBook native BLE and USB sniffer dongle")
 
     with gr.Tab("Control"):
         with gr.Row():
@@ -342,15 +338,11 @@ with gr.Blocks(title="BlueFusion BLE Monitor", theme=gr.themes.Soft()) as app:
                     start_btn = gr.Button("Start Scan", variant="primary")
                     stop_btn = gr.Button("Stop Scan", variant="stop")
 
-                scan_output = gr.Textbox(
-                    label="Scan Status", lines=2, interactive=False
-                )
+                scan_output = gr.Textbox(label="Scan Status", lines=2, interactive=False)
 
             with gr.Column(scale=2):
                 gr.Markdown("### Interface Status")
-                status_display = gr.Textbox(
-                    label="Current Status", lines=10, interactive=False
-                )
+                status_display = gr.Textbox(label="Current Status", lines=10, interactive=False)
                 refresh_btn = gr.Button("Refresh Status")
 
         with gr.Row():
@@ -410,15 +402,11 @@ with gr.Blocks(title="BlueFusion BLE Monitor", theme=gr.themes.Soft()) as app:
             # Create the interface and capture returned components
             service_explorer_components = service_explorer_ui.create_interface()
         else:
-            gr.Markdown(
-                "⚠️ Service Explorer initialization failed. Please refresh the page."
-            )
+            gr.Markdown("⚠️ Service Explorer initialization failed. Please refresh the page.")
 
     with gr.Tab("Characteristic Monitor"):
         gr.Markdown("### 📊 Characteristic Value Monitor & Pattern Analysis")
-        gr.Markdown(
-            "Monitor BLE characteristic values in real-time and detect patterns"
-        )
+        gr.Markdown("Monitor BLE characteristic values in real-time and detect patterns")
 
         # Initialize and create Characteristic Monitor interface
         _, _, _, _, characteristic_monitor = ensure_initialized()
@@ -426,9 +414,7 @@ with gr.Blocks(title="BlueFusion BLE Monitor", theme=gr.themes.Soft()) as app:
             # Create the interface and capture returned components
             char_monitor_components = characteristic_monitor.create_interface()
         else:
-            gr.Markdown(
-                "⚠️ Characteristic Monitor initialization failed. Please refresh the page."
-            )
+            gr.Markdown("⚠️ Characteristic Monitor initialization failed. Please refresh the page.")
 
     with gr.Tab("Packet Inspector"):
         gr.Markdown("### 🔍 Deep Packet Analysis")
@@ -442,9 +428,7 @@ with gr.Blocks(title="BlueFusion BLE Monitor", theme=gr.themes.Soft()) as app:
                 inspect_btn = gr.Button("Inspect Packet", variant="primary")
 
                 gr.Markdown("#### Inspector Statistics")
-                protocol_stats = gr.Dataframe(
-                    label="Protocol Distribution", interactive=True
-                )
+                protocol_stats = gr.Dataframe(label="Protocol Distribution", interactive=True)
 
                 security_stats = gr.Dataframe(label="Security Events", interactive=True)
 
@@ -456,13 +440,9 @@ with gr.Blocks(title="BlueFusion BLE Monitor", theme=gr.themes.Soft()) as app:
 
                 with gr.Row():
                     with gr.Column():
-                        parsed_fields = gr.Dataframe(
-                            label="Parsed Fields", interactive=True
-                        )
+                        parsed_fields = gr.Dataframe(label="Parsed Fields", interactive=True)
                     with gr.Column():
-                        hex_dump = gr.Textbox(
-                            label="Hex Dump", lines=10, interactive=True
-                        )
+                        hex_dump = gr.Textbox(label="Hex Dump", lines=10, interactive=True)
 
     with gr.Tab("Wiki"):
         gr.Markdown("### 📚 BlueFusion Wiki")
@@ -535,9 +515,7 @@ with gr.Blocks(title="BlueFusion BLE Monitor", theme=gr.themes.Soft()) as app:
                             )
                             update_btn = gr.Button("Update", size="sm")
 
-                        notes_input = gr.Textbox(
-                            placeholder="Add notes...", label="Notes", lines=2
-                        )
+                        notes_input = gr.Textbox(placeholder="Add notes...", label="Notes", lines=2)
 
                     with gr.Column():
                         feature_context = gr.Textbox(
@@ -567,19 +545,13 @@ with gr.Blocks(title="BlueFusion BLE Monitor", theme=gr.themes.Soft()) as app:
         outputs=[scan_output, status_display],
     )
 
-    stop_btn.click(
-        stop_scanning, inputs=[interface_select], outputs=[scan_output, status_display]
-    )
+    stop_btn.click(stop_scanning, inputs=[interface_select], outputs=[scan_output, status_display])
 
     refresh_btn.click(get_interface_status, outputs=[status_display])
 
-    refresh_devices_btn.click(
-        get_device_list, inputs=[device_interface], outputs=[device_table]
-    )
+    refresh_devices_btn.click(get_device_list, inputs=[device_interface], outputs=[device_table])
 
-    set_channel_btn.click(
-        set_channel, inputs=[channel_slider], outputs=[channel_output]
-    )
+    set_channel_btn.click(set_channel, inputs=[channel_slider], outputs=[channel_output])
 
     refresh_stats_btn.click(update_stats, outputs=[stats_text])
 
@@ -616,9 +588,7 @@ with gr.Blocks(title="BlueFusion BLE Monitor", theme=gr.themes.Soft()) as app:
         context = roadmap_ui.generate_batch_context(category)
         return gr.Textbox(value=context, visible=True)
 
-    category_select.change(
-        on_category_change, inputs=[category_select], outputs=[features_table]
-    )
+    category_select.change(on_category_change, inputs=[category_select], outputs=[features_table])
 
     features_table.select(
         on_feature_select,
@@ -654,9 +624,7 @@ with gr.Blocks(title="BlueFusion BLE Monitor", theme=gr.themes.Soft()) as app:
         choices = get_recent_packets_for_selector()
         if choices and choices[0][1] is None:
             return gr.Dropdown(choices=choices, value=None)
-        return gr.Dropdown(
-            choices=choices, value=None if not choices else choices[0][1]
-        )
+        return gr.Dropdown(choices=choices, value=None if not choices else choices[0][1])
 
     inspect_btn.click(
         inspect_selected_packet,

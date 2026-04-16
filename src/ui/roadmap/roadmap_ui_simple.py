@@ -53,9 +53,7 @@ class SimplifiedRoadmapUI:
 
         return rows
 
-    def select_feature(
-        self, category: str, selected_rows: List[int]
-    ) -> Tuple[str, str, str]:
+    def select_feature(self, category: str, selected_rows: List[int]) -> Tuple[str, str, str]:
         """Handle feature selection and generate instant context"""
         if " (" in category:
             category = category.split(" (")[0]
@@ -83,21 +81,15 @@ class SimplifiedRoadmapUI:
 
         return "Invalid selection", "", ""
 
-    def update_feature_status(
-        self, new_status: str, notes: str
-    ) -> Tuple[str, List[List[str]]]:
+    def update_feature_status(self, new_status: str, notes: str) -> Tuple[str, List[List[str]]]:
         """Quick update of selected feature status"""
         if not self.selected_feature or not self.selected_category:
             return "No feature selected", []
 
         # Update in memory
-        self.features[self.selected_category][self.selected_feature][
-            "status"
-        ] = new_status
+        self.features[self.selected_category][self.selected_feature]["status"] = new_status
         if notes:
-            self.features[self.selected_category][self.selected_feature][
-                "notes"
-            ] = notes
+            self.features[self.selected_category][self.selected_feature]["notes"] = notes
 
         # Save to storage
         self.storage.update_feature_status(
@@ -121,27 +113,24 @@ class SimplifiedRoadmapUI:
         for category, features in self.features.items():
             for feature, info in features.items():
                 if query in feature.lower() or query in info["description"].lower():
-
                     status_emoji = {
                         "completed": "✅",
                         "partial": "🔶",
                         "pending": "⬜",
                     }.get(info["status"], "❓")
 
-                    results.append(
-                        [f"{status_emoji} {feature}", category, info["description"]]
-                    )
+                    results.append([f"{status_emoji} {feature}", category, info["description"]])
 
         return results[:20]  # Limit to 20 results
 
     def get_quick_stats(self) -> str:
         """Get simple stats display"""
         stats = get_feature_stats()
-        return f"""**Progress: {stats['completion_percentage']}%**
-✅ Completed: {stats['completed']}
-🔶 Partial: {stats['partial']}
-⬜ Pending: {stats['pending']}
-Total: {stats['total']} features"""
+        return f"""**Progress: {stats["completion_percentage"]}%**
+✅ Completed: {stats["completed"]}
+🔶 Partial: {stats["partial"]}
+⬜ Pending: {stats["pending"]}
+Total: {stats["total"]} features"""
 
     def generate_batch_context(self, category: str) -> str:
         """Generate context for all pending features in category"""
@@ -149,9 +138,7 @@ Total: {stats['total']} features"""
             category = category.split(" (")[0]
 
         features = self.features.get(category, {})
-        pending = [
-            (f, info) for f, info in features.items() if info["status"] == "pending"
-        ]
+        pending = [(f, info) for f, info in features.items() if info["status"] == "pending"]
 
         if not pending:
             return "No pending features in this category!"
